@@ -6,6 +6,8 @@
  * See COPYING.txt for license details.
  */
 
+echo 1;exit;
+
 use Magento\Framework\App\Bootstrap;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
