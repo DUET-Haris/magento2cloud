@@ -19,6 +19,8 @@
  */
 
 
+echo "Integration";exit;
+
 
 try {
     require __DIR__ . '/app/bootstrap.php';
