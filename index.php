@@ -1,4 +1,4 @@
-<?php
+e<?php
 /**
  * Application entry point
  *
@@ -17,6 +17,9 @@
  * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
+
+
+echo 'testing';exit;
 
 
 try {
