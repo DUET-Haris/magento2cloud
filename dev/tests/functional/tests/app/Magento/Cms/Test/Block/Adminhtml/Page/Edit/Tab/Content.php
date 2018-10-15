@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -109,7 +109,7 @@ class Content extends Tab
     public function getWysiwygConfig()
     {
         return $this->blockFactory->create(
-            \Magento\Cms\Test\Block\Adminhtml\Wysiwyg\Config::class,
+            'Magento\Cms\Test\Block\Adminhtml\Wysiwyg\Config',
             ['element' => $this->_rootElement->find($this->systemVariableBlock, Locator::SELECTOR_XPATH)]
         );
     }
@@ -122,7 +122,7 @@ class Content extends Tab
     public function getWidgetBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Widget\Test\Block\Adminhtml\WidgetForm::class,
+            'Magento\Widget\Test\Block\Adminhtml\WidgetForm',
             ['element' => $this->_rootElement->find($this->widgetBlock, Locator::SELECTOR_XPATH)]
         );
     }
@@ -170,15 +170,5 @@ class Content extends Tab
             'content' => [],
             'content_heading' => ''
         ];
-    }
-
-    /**
-     * Check if system variables block is visible.
-     *
-     * @return bool
-     */
-    public function isVariablesBlockVisible()
-    {
-        return $this->_rootElement->find($this->systemVariableBlock, Locator::SELECTOR_XPATH)->isVisible();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,9 +10,10 @@
 namespace Magento\Test\App;
 
 use Magento\Framework\App\Config\ScopeCodeResolver;
+use Magento\Framework\App\Config\ScopePool;
 use Magento\TestFramework\App\Config;
 
-class ConfigTest extends \PHPUnit\Framework\TestCase
+class ConfigTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Config
@@ -21,10 +22,13 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
+        $scopePool = $this->getMockBuilder(ScopePool::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $scopeCodeResolver = $this->getMockBuilder(ScopeCodeResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->model = new Config($scopeCodeResolver);
+        $this->model = new Config($scopePool, $scopeCodeResolver);
     }
 
     public function testGet()

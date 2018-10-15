@@ -1,25 +1,25 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 
-$eavConfig = Bootstrap::getObjectManager()->get(\Magento\Eav\Model\Config::class);
+$eavConfig = Bootstrap::getObjectManager()->get('Magento\Eav\Model\Config');
 $attribute = $eavConfig->getAttribute('catalog_product', 'test_configurable');
 
 $eavConfig->clear();
 
 /** @var $installer \Magento\Catalog\Setup\CategorySetup */
-$installer = Bootstrap::getObjectManager()->create(\Magento\Catalog\Setup\CategorySetup::class);
+$installer = Bootstrap::getObjectManager()->create('Magento\Catalog\Setup\CategorySetup');
 
 if (!$attribute->getId()) {
 
     /** @var $attribute \Magento\Catalog\Model\ResourceModel\Eav\Attribute */
     $attribute = Bootstrap::getObjectManager()->create(
-        \Magento\Catalog\Model\ResourceModel\Eav\Attribute::class
+        'Magento\Catalog\Model\ResourceModel\Eav\Attribute'
     );
 
     /** @var AttributeRepositoryInterface $attributeRepository */

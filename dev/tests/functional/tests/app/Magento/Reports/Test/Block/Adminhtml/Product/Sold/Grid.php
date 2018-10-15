@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -33,13 +33,6 @@ class Grid extends \Magento\Backend\Test\Block\Widget\Grid
      * @var string
      */
     protected $product = './/*[contains(.,"%s")]/*[contains(@class,"col-qty")]';
-
-    /**
-     * Product sku from grid locator
-     *
-     * @var string
-     */
-    protected $productSku = './/*[contains(.,"%s")]/*[contains(@class,"col-sku")]';
 
     /**
      * Filter locator
@@ -85,7 +78,7 @@ class Grid extends \Magento\Backend\Test\Block\Widget\Grid
                 continue;
             }
             $date = ObjectManager::getInstance()->create(
-                \Magento\Backend\Test\Fixture\Source\Date::class,
+                '\Magento\Backend\Test\Fixture\Source\Date',
                 ['params' => [], 'data' => ['pattern' => $reportFilter]]
             );
             $customersReport[$name] = $date->getData();
@@ -108,22 +101,5 @@ class Grid extends \Magento\Backend\Test\Block\Widget\Grid
                 ->find(sprintf($this->product, $product->getName()), Locator::SELECTOR_XPATH)->getText();
         }
         return $views;
-    }
-
-    /**
-     * Get product sku from Ordered Products Report grid
-     *
-     * @param OrderInjectable $order
-     * @return array
-     */
-    public function getOrdersResultsforConfigurableProducts(OrderInjectable $order)
-    {
-        $products = $order->getEntityId()['products'];
-        $skus = [];
-        foreach ($products as $key => $productSku) {
-            $skus[$key] = $this->_rootElement
-                ->find(sprintf($this->productSku, $productSku->getName()), Locator::SELECTOR_XPATH)->getText();
-        }
-        return $skus;
     }
 }

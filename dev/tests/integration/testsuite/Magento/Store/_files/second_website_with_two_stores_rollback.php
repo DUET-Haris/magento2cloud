@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,10 +11,10 @@ $registry->unregister('isSecureArea');
 $registry->register('isSecureArea', true);
 $website = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Store\Model\Website::class);
 /** @var $website \Magento\Store\Model\Website */
-$websiteId = $website->load('test', 'code')->getId();
-if ($websiteId) {
+if ($website->load('test', 'code')->getId()) {
     $website->delete();
 }
+$websiteId = $website->getId();
 $store = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Store\Model\Store::class);
 if ($store->load('fixture_second_store', 'code')->getId()) {
     $store->delete();

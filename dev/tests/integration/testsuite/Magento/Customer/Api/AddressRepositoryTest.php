@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -14,9 +14,8 @@ use Magento\Framework\Exception\NoSuchEntityException;
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
+class AddressRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var AddressRepositoryInterface */
     private $repository;
@@ -36,13 +35,11 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->repository = $this->_objectManager->create(\Magento\Customer\Api\AddressRepositoryInterface::class);
-        $this->_addressFactory = $this->_objectManager->create(
-            \Magento\Customer\Api\Data\AddressInterfaceFactory::class
-        );
-        $this->dataObjectHelper = $this->_objectManager->create(\Magento\Framework\Api\DataObjectHelper::class);
+        $this->repository = $this->_objectManager->create('Magento\Customer\Api\AddressRepositoryInterface');
+        $this->_addressFactory = $this->_objectManager->create('Magento\Customer\Api\Data\AddressInterfaceFactory');
+        $this->dataObjectHelper = $this->_objectManager->create('Magento\Framework\Api\DataObjectHelper');
 
-        $regionFactory = $this->_objectManager->create(\Magento\Customer\Api\Data\RegionInterfaceFactory::class);
+        $regionFactory = $this->_objectManager->create('Magento\Customer\Api\Data\RegionInterfaceFactory');
         $region = $regionFactory->create();
         $region->setRegionCode('AL')
             ->setRegion('Alabama')
@@ -82,7 +79,7 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         /** @var \Magento\Customer\Model\CustomerRegistry $customerRegistry */
-        $customerRegistry = $objectManager->get(\Magento\Customer\Model\CustomerRegistry::class);
+        $customerRegistry = $objectManager->get('Magento\Customer\Model\CustomerRegistry');
         $customerRegistry->remove(1);
     }
 
@@ -200,50 +197,15 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
             ->setId(null)
             ->setFirstname(null)
             ->setLastname(null)
-            ->setCustomerId(1)
-            ->setRegionId($invalidRegion = 10354);
+            ->setCustomerId(1);
         try {
             $this->repository->save($address);
         } catch (InputException $exception) {
             $this->assertEquals('One or more input exceptions have occurred.', $exception->getMessage());
             $errors = $exception->getErrors();
-            $this->assertCount(3, $errors);
+            $this->assertCount(2, $errors);
             $this->assertEquals('firstname is a required field.', $errors[0]->getLogMessage());
             $this->assertEquals('lastname is a required field.', $errors[1]->getLogMessage());
-            $this->assertEquals(
-                __(
-                    'Invalid value of "%value" provided for the %fieldName field.',
-                    ['fieldName' => 'regionId', 'value' => $invalidRegion]
-                ),
-                $errors[2]->getLogMessage()
-            );
-        }
-
-        $address->setCountryId($invalidCountry = 'invalid_id');
-        try {
-            $this->repository->save($address);
-        } catch (InputException $exception) {
-            $this->assertEquals(
-                'One or more input exceptions have occurred.',
-                $exception->getMessage()
-            );
-            $errors = $exception->getErrors();
-            $this->assertCount(3, $errors);
-            $this->assertEquals(
-                'firstname is a required field.',
-                $errors[0]->getLogMessage()
-            );
-            $this->assertEquals(
-                'lastname is a required field.',
-                $errors[1]->getLogMessage()
-            );
-            $this->assertEquals(
-                __(
-                    'Invalid value of "%value" provided for the %fieldName field.',
-                    ['fieldName' => 'countryId', 'value' => $invalidCountry]
-                ),
-                $errors[2]->getLogMessage()
-            );
         }
     }
 
@@ -342,7 +304,7 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
     public function testSearchAddresses($filters, $filterGroup, $expectedResult)
     {
         /** @var \Magento\Framework\Api\SearchCriteriaBuilder $searchBuilder */
-        $searchBuilder = $this->_objectManager->create(\Magento\Framework\Api\SearchCriteriaBuilder::class);
+        $searchBuilder = $this->_objectManager->create('Magento\Framework\Api\SearchCriteriaBuilder');
         foreach ($filters as $filter) {
             $searchBuilder->addFilters([$filter]);
         }
@@ -372,16 +334,13 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @return array
-     */
     public function searchAddressDataProvider()
     {
         /**
          * @var \Magento\Framework\Api\FilterBuilder $filterBuilder
          */
         $filterBuilder = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Framework\Api\FilterBuilder::class);
+            ->create('Magento\Framework\Api\FilterBuilder');
         return [
             'Address with postcode 75477' => [
                 [$filterBuilder->setField('postcode')->setValue('75477')->create()],
@@ -398,7 +357,7 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
                 null,
                 [
                     1 => ['city' => 'CityM', 'postcode' => 75477, 'firstname' => 'John'],
-                    2 => ['city' => 'CityX', 'postcode' => 47676, 'firstname' => 'John'],
+                    2 => ['city' => 'CityX', 'postcode' => 47676, 'firstname' => 'John']
                 ],
             ],
             'Addresses with postcode of either 75477 or 47676' => [
@@ -409,7 +368,7 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
                 ],
                 [
                     1 => ['city' => 'CityM', 'postcode' => 75477, 'firstname' => 'John'],
-                    2 => ['city' => 'CityX', 'postcode' => 47676, 'firstname' => 'John'],
+                    2 => ['city' => 'CityX', 'postcode' => 47676, 'firstname' => 'John']
                 ],
             ],
             'Addresses with postcode greater than 0' => [
@@ -417,7 +376,7 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
                 null,
                 [
                     1 => ['city' => 'CityM', 'postcode' => 75477, 'firstname' => 'John'],
-                    2 => ['city' => 'CityX', 'postcode' => 47676, 'firstname' => 'John'],
+                    2 => ['city' => 'CityX', 'postcode' => 47676, 'firstname' => 'John']
                 ],
             ]
         ];
@@ -432,7 +391,7 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
     {
         $address = $this->_addressFactory->create();
         $this->dataObjectHelper->mergeDataObjects(
-            \Magento\Customer\Api\Data\AddressInterface::class,
+            '\Magento\Customer\Api\Data\AddressInterface',
             $address,
             $this->_expectedAddresses[0]
         );
@@ -450,7 +409,7 @@ class AddressRepositoryTest extends \PHPUnit\Framework\TestCase
     {
         $address = $this->_addressFactory->create();
         $this->dataObjectHelper->mergeDataObjects(
-            \Magento\Customer\Api\Data\AddressInterface::class,
+            '\Magento\Customer\Api\Data\AddressInterface',
             $address,
             $this->_expectedAddresses[1]
         );

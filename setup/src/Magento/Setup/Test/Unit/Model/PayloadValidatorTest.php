@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Model;
 
 use \Magento\Setup\Model\PayloadValidator;
 
-class PayloadValidatorTest extends \PHPUnit\Framework\TestCase
+class PayloadValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Module\FullModuleList|\PHPUnit_Framework_MockObject_MockObject
@@ -22,7 +22,7 @@ class PayloadValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->fullModuleList = $this->createMock(\Magento\Framework\Module\FullModuleList::class);
+        $this->fullModuleList = $this->getMock('Magento\Framework\Module\FullModuleList', [], [], '', false);
         $this->model = new PayloadValidator($this->fullModuleList);
     }
 
@@ -38,9 +38,6 @@ class PayloadValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('', $this->model->validatePayload($type));
     }
 
-    /**
-     * @return array
-     */
     public function validatePayLoadDataProvider()
     {
         return [
@@ -64,9 +61,6 @@ class PayloadValidatorTest extends \PHPUnit\Framework\TestCase
         $this->assertStringStartsWith($errorMessage, $this->model->validatePayload($type));
     }
 
-    /**
-     * @return array
-     */
     public function validatePayLoadNegativeCasesDataProvider()
     {
         return [

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,7 +12,6 @@ use Magento\Cms\Test\Fixture\CmsPage;
 use Magento\Sitemap\Test\Fixture\Sitemap;
 use Magento\Sitemap\Test\Page\Adminhtml\SitemapIndex;
 use Magento\Sitemap\Test\Page\Adminhtml\SitemapNew;
-use Magento\Mtf\TestStep\TestStepFactory;
 use Magento\Mtf\TestCase\Injectable;
 
 /**
@@ -20,10 +19,9 @@ use Magento\Mtf\TestCase\Injectable;
  *
  * Test Flow:
  * Preconditions:
- *  1. Create category.
- *  2. Create simple product.
- *  3. Create CMS page.
- *  4. Set configurations.
+ *  1. Create category
+ *  2. Create simple product
+ *  3. Create CMS page
  * Steps:
  *  1. Log in as admin user from data set.
  *  2. Navigate to Marketing > SEO and Search > Site Map.
@@ -32,22 +30,15 @@ use Magento\Mtf\TestCase\Injectable;
  *  5. Click "Save" button.
  *  6. Perform all assertions.
  *
- * @group XML_Sitemap
+ * @group XML_Sitemap_(PS)
  * @ZephyrId MAGETWO-25124
  */
 class GenerateSitemapEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'no';
-    const SEVERITY = 'S1';
+    const DOMAIN = 'PS';
     /* end tags */
-
-    /**
-     * Step factory.
-     *
-     * @var TestStepFactory
-     */
-    private $stepFactory;
 
     /**
      * Sitemap grid page
@@ -64,28 +55,18 @@ class GenerateSitemapEntityTest extends Injectable
     protected $sitemapNew;
 
     /**
-     * Configuration setting.
-     *
-     * @var string
-     */
-    private $configData;
-
-    /**
      * Inject data
      *
      * @param SitemapIndex $sitemapIndex
      * @param SitemapNew $sitemapNew
-     * @param TestStepFactory $stepFactory
      * @return void
      */
     public function __inject(
         SitemapIndex $sitemapIndex,
-        SitemapNew $sitemapNew,
-        TestStepFactory $stepFactory
+        SitemapNew $sitemapNew
     ) {
         $this->sitemapIndex = $sitemapIndex;
         $this->sitemapNew = $sitemapNew;
-        $this->stepFactory = $stepFactory;
     }
 
     /**
@@ -95,26 +76,15 @@ class GenerateSitemapEntityTest extends Injectable
      * @param CatalogProductSimple $product
      * @param Category $catalog
      * @param CmsPage $cmsPage
-     * @param null|string $configData
      * @return void
      */
     public function testGenerateSitemap(
         Sitemap $sitemap,
         CatalogProductSimple $product,
         Category $catalog,
-        CmsPage $cmsPage,
-        $configData = null
+        CmsPage $cmsPage
     ) {
-        $this->configData = $configData;
-
         // Preconditions
-        if ($this->configData !== null) {
-            $this->stepFactory->create(
-                \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-                ['configData' => $this->configData]
-            )->run();
-        }
-
         $product->persist();
         $catalog->persist();
         $cmsPage->persist();
@@ -124,20 +94,5 @@ class GenerateSitemapEntityTest extends Injectable
         $this->sitemapIndex->getGridPageActions()->addNew();
         $this->sitemapNew->getSitemapForm()->fill($sitemap);
         $this->sitemapNew->getSitemapPageActions()->saveAndGenerate();
-    }
-
-    /**
-     * Set default configuration.
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        if ($this->configData !== null) {
-            $this->stepFactory->create(
-                \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-                ['configData' => $this->configData, 'rollback' => true]
-            )->run();
-        }
     }
 }

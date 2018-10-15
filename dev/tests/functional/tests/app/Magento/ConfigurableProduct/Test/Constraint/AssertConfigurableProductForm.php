@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -150,7 +150,7 @@ class AssertConfigurableProductForm extends AssertProductForm
     {
         $data = array_diff_key($product->getData(), ['price' => 0, 'special_price' => 0]);
         return $this->objectManager->create(
-            \Magento\ConfigurableProduct\Test\Fixture\ConfigurableProduct::class,
+            'Magento\ConfigurableProduct\Test\Fixture\ConfigurableProduct',
             ['data' => $data]
         );
     }

@@ -1,29 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Setup\Fixtures;
 
 /**
- * Fixture for generating cart price rules
- *
- * Support the following format:
- * <!-- Number of cart price rules -->
- * <cart_price_rules>{int}</cart_price_rules>
- *
- * <!-- Number of conditions per rule -->
- * <cart_price_rules_floor>{int}</cart_price_rules_floor>
- *
- * @see setup/performance-toolkit/profiles/ce/small.xml
+ * Class CartPriceRulesFixture
  */
 class CartPriceRulesFixture extends Fixture
 {
     /**
      * @var int
      */
-    protected $priority = 80;
+    protected $priority = 70;
 
     /**
      * @var float
@@ -39,26 +30,6 @@ class CartPriceRulesFixture extends Fixture
      * @var bool
      */
     protected $cartRulesAdvancedType = false;
-
-    /**
-     * @var \Magento\SalesRule\Model\RuleFactory
-     */
-    private $ruleFactory;
-
-    /**
-     * Constructor
-     *
-     * @param FixtureModel $fixtureModel
-     * @param \Magento\SalesRule\Model\RuleFactory|null $ruleFactory
-     */
-    public function __construct(
-        FixtureModel $fixtureModel,
-        \Magento\SalesRule\Model\RuleFactory $ruleFactory = null
-    ) {
-        parent::__construct($fixtureModel);
-        $this->ruleFactory = $ruleFactory ?: $this->fixtureModel->getObjectManager()
-            ->get(\Magento\SalesRule\Model\RuleFactory::class);
-    }
 
     /**
      * {@inheritdoc}
@@ -79,9 +50,11 @@ class CartPriceRulesFixture extends Fixture
         );
 
         /** @var \Magento\Store\Model\StoreManager $storeManager */
-        $storeManager = $this->fixtureModel->getObjectManager()->create(\Magento\Store\Model\StoreManager::class);
+        $storeManager = $this->fixtureModel->getObjectManager()->create('Magento\Store\Model\StoreManager');
         /** @var $category \Magento\Catalog\Model\Category */
-        $category = $this->fixtureModel->getObjectManager()->get(\Magento\Catalog\Model\Category::class);
+        $category = $this->fixtureModel->getObjectManager()->get('Magento\Catalog\Model\Category');
+        /** @var $model  \Magento\SalesRule\Model\RuleFactory */
+        $modelFactory = $this->fixtureModel->getObjectManager()->get('Magento\SalesRule\Model\RuleFactory');
 
         //Get all websites
         $categoriesArray = [];
@@ -108,9 +81,9 @@ class CartPriceRulesFixture extends Fixture
         $categoriesArray = array_values($categoriesArray);
 
         if ($this->cartRulesAdvancedType == false) {
-            $this->generateRules($this->ruleFactory, $categoriesArray);
+            $this->generateRules($modelFactory, $categoriesArray);
         } else {
-            $this->generateAdvancedRules($this->ruleFactory, $categoriesArray);
+            $this->generateAdvancedRules($modelFactory, $categoriesArray);
         }
     }
 
@@ -124,25 +97,25 @@ class CartPriceRulesFixture extends Fixture
         return [
             'conditions' => [
                 1 => [
-                    'type' => \Magento\SalesRule\Model\Rule\Condition\Combine::class,
+                    'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Combine',
                     'aggregator' => 'all',
                     'value' => '1',
                     'new_child' => '',
                 ],
                 '1--1' => [
-                    'type' => \Magento\SalesRule\Model\Rule\Condition\Address::class,
+                    'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Address',
                     'attribute' => 'total_qty',
                     'operator' => '>=',
                     'value' => $this->cartPriceRulesProductsFloor + $ruleId,
                 ],
                 '1--2' => [
-                    'type' => \Magento\SalesRule\Model\Rule\Condition\Product\Found::class,
+                    'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Product\\Found',
                     'value' => '1',
                     'aggregator' => 'all',
                     'new_child' => '',
                 ],
                 '1--2--1' => [
-                    'type' => \Magento\SalesRule\Model\Rule\Condition\Product::class,
+                    'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Product',
                     'attribute' => 'category_ids',
                     'operator' => '==',
                     'value' => $categoriesArray[$ruleId % count($categoriesArray)][0],
@@ -150,7 +123,7 @@ class CartPriceRulesFixture extends Fixture
             ],
             'actions' => [
                 1 => [
-                    'type' => \Magento\SalesRule\Model\Rule\Condition\Product\Combine::class,
+                    'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Product\\Combine',
                     'aggregator' => 'all',
                     'value' => '1',
                     'new_child' => '',
@@ -160,11 +133,11 @@ class CartPriceRulesFixture extends Fixture
     }
 
     /**
-     * @param \Magento\SalesRule\Model\RuleFactory $ruleFactory
+     * @param \Magento\SalesRule\Model\RuleFactory $modelFactory
      * @param array $categoriesArray
      * @return void
      */
-    public function generateRules($ruleFactory, $categoriesArray)
+    public function generateRules($modelFactory, $categoriesArray)
     {
         for ($i = 0; $i < $this->cartPriceRulesCount; $i++) {
             $ruleName = sprintf('Cart Price Rule %1$d', $i);
@@ -236,7 +209,7 @@ class CartPriceRulesFixture extends Fixture
             }
             unset($data['rule']);
 
-            $model = $ruleFactory->create();
+            $model = $modelFactory->create();
             $model->loadPost($data);
             $useAutoGeneration = (int)!empty($data['use_auto_generation']);
             $model->setUseAutoGeneration($useAutoGeneration);
@@ -255,16 +228,16 @@ class CartPriceRulesFixture extends Fixture
         if ($ruleId < ($this->cartPriceRulesCount - 200)) {
             // Category
             $firstCondition = [
-                'type'      => \Magento\SalesRule\Model\Rule\Condition\Product::class,
+                'type'      => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Product',
                 'attribute' => 'category_ids',
                 'operator'  => '==',
-                'value'     => $categoriesArray[($ruleId / 4) % count($categoriesArray)][0],
+                'value'     => $categoriesArray[($ruleId / 4 ) % count($categoriesArray)][0],
             ];
 
             $subtotal = [0, 5, 10, 15];
             // Subtotal
             $secondCondition = [
-                'type'      => \Magento\SalesRule\Model\Rule\Condition\Address::class,
+                'type'      => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Address',
                 'attribute' => 'base_subtotal',
                 'operator'  => '>=',
                 'value'     => $subtotal[$ruleId % 4],
@@ -273,13 +246,13 @@ class CartPriceRulesFixture extends Fixture
             return [
                 'conditions' => [
                     1 => [
-                        'type' => \Magento\SalesRule\Model\Rule\Condition\Combine::class,
+                        'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Combine',
                         'aggregator' => 'all',
                         'value' => '1',
                         'new_child' => '',
                     ],
                     '1--1'=> [
-                        'type' => \Magento\SalesRule\Model\Rule\Condition\Product\Found::class,
+                        'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Product\\Found',
                         'aggregator' => 'all',
                         'value' => '1',
                         'new_child' => '',
@@ -289,7 +262,7 @@ class CartPriceRulesFixture extends Fixture
                 ],
                 'actions' => [
                     1 => [
-                        'type' => \Magento\SalesRule\Model\Rule\Condition\Product\Combine::class,
+                        'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Product\\Combine',
                         'aggregator' => 'all',
                         'value' => '1',
                         'new_child' => '',
@@ -307,7 +280,7 @@ class CartPriceRulesFixture extends Fixture
                         'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia',
                         'Wisconsin', 'Wyoming'];
             $firstCondition = [
-                'type'      => \Magento\SalesRule\Model\Rule\Condition\Address::class,
+                'type'      => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Address',
                 'attribute' => 'region',
                 'operator'  => '==',
                 'value'     => $regions[($ruleId / 4) % 50],
@@ -316,7 +289,7 @@ class CartPriceRulesFixture extends Fixture
             $subtotals = [0, 5, 10, 15];
             // Subtotal
             $secondCondition = [
-                'type'      => \Magento\SalesRule\Model\Rule\Condition\Address::class,
+                'type'      => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Address',
                 'attribute' => 'base_subtotal',
                 'operator'  => '>=',
                 'value'     => $subtotals[$ruleId % 4],
@@ -324,7 +297,7 @@ class CartPriceRulesFixture extends Fixture
             return [
                 'conditions' => [
                     1 => [
-                        'type' => \Magento\SalesRule\Model\Rule\Condition\Combine::class,
+                        'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Combine',
                         'aggregator' => 'all',
                         'value' => '1',
                         'new_child' => '',
@@ -334,7 +307,7 @@ class CartPriceRulesFixture extends Fixture
                 ],
                 'actions' => [
                     1 => [
-                        'type' => \Magento\SalesRule\Model\Rule\Condition\Product\Combine::class,
+                        'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Product\\Combine',
                         'aggregator' => 'all',
                         'value' => '1',
                         'new_child' => '',
@@ -345,11 +318,11 @@ class CartPriceRulesFixture extends Fixture
     }
 
     /**
-     * @param \Magento\SalesRule\Model\RuleFactory $ruleFactory
+     * @param \Magento\SalesRule\Model\RuleFactory $modelFactory
      * @param array $categoriesArray
      * @return void
      */
-    public function generateAdvancedRules($ruleFactory, $categoriesArray)
+    public function generateAdvancedRules($modelFactory, $categoriesArray)
     {
         $j = 0;
         for ($i = 0; $i < $this->cartPriceRulesCount; $i++) {
@@ -427,7 +400,7 @@ class CartPriceRulesFixture extends Fixture
             }
             unset($data['rule']);
 
-            $model = $ruleFactory->create();
+            $model = $modelFactory->create();
             $model->loadPost($data);
             $useAutoGeneration = (int)!empty($data['use_auto_generation']);
             $model->setUseAutoGeneration($useAutoGeneration);

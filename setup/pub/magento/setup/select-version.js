@@ -1,5 +1,5 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,7 +13,6 @@ angular.module('select-version', ['ngStorage'])
         $scope.upgradeReadyForNext = false;
         $scope.upgradeProcessed = false;
         $scope.upgradeProcessError = false;
-        $scope.upgradeAlreadyLatestVersion = false;
         $scope.upgradeProcessErrorMessage = '';
         $scope.componentsReadyForNext = true;
         $scope.componentsProcessed = false;
@@ -30,23 +29,15 @@ angular.module('select-version', ['ngStorage'])
         $http.get('index.php/select-version/systemPackage', {'responseType' : 'json'})
             .success(function (data) {
                 if (data.responseType != 'error') {
-                    $scope.upgradeProcessError = true;
-
-                    angular.forEach(data.packages, function (value, key) {
-                        if (!value.current) {
-                            return $scope.upgradeProcessError = false;
-                        }
-                    });
-
-                    if ($scope.upgradeProcessError) {
+                    if (data.packages.length == 1) {
+                        $scope.upgradeProcessError = true;
                         $scope.upgradeProcessErrorMessage = "You're already using the latest version, there's nothing for us to do.";
-                        $scope.upgradeAlreadyLatestVersion = true;
                     } else {
                         $scope.selectedOption = [];
                         $scope.versions = [];
                         $scope.data = data;
                         angular.forEach(data.packages, function (value, key) {
-                            if (value.stable && !value.current) {
+                            if (value.stable) {
                                 $scope.versions.push({
                                     'versionInfo': angular.toJson({
                                         'package': value.package,
@@ -54,15 +45,10 @@ angular.module('select-version', ['ngStorage'])
                                     }),
                                     'version': value
                                 });
-                            } else if (value.stable && value.current) {
-                                $scope.currentVersion = value.name;
                             }
                         });
-
-                        if ($scope.versions.length > 0) {
-                            $scope.selectedOption = $scope.versions[0].versionInfo;
-                            $scope.upgradeReadyForNext = true;
-                        }
+                        $scope.selectedOption = $scope.versions[0].versionInfo;
+                        $scope.upgradeReadyForNext = true;
                     }
 
                 } else {
@@ -172,7 +158,7 @@ angular.module('select-version', ['ngStorage'])
             $scope.selectedOption = [];
             $scope.versions = [];
             angular.forEach($scope.data.packages, function (value, key) {
-                if ((value.stable || $scope.showUnstable) && !value.current) {
+                if (value.stable || $scope.showUnstable) {
                     $scope.versions.push({
                         'versionInfo': angular.toJson({
                             'package': value.package,
@@ -182,12 +168,9 @@ angular.module('select-version', ['ngStorage'])
                     });
                 }
             });
-
-            if ($scope.versions.length > 0) {
-                $scope.selectedOption = $scope.versions[0].versionInfo;
-                $scope.upgradeReadyForNext = true;
-            }
-        };
+            $scope.selectedOption = $scope.versions[0].versionInfo;
+            $scope.upgradeReadyForNext = true;
+        }
 
         $scope.update = function() {
             var selectedVersionInfo = angular.fromJson($scope.selectedOption);
@@ -198,7 +181,6 @@ angular.module('select-version', ['ngStorage'])
                     $scope.packages.splice(1, $scope.totalForGrid);
                 }
             }
-            $localStorage.moduleName = '';
             $localStorage.packages = $scope.packages;
             $scope.nextState();
         };

@@ -2,7 +2,7 @@
 /**
  * Default application path for backend area
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -28,7 +28,10 @@ class Config extends \Magento\Backend\App\Config
      */
     public function __construct(\Magento\TestFramework\App\Config $appConfig, \Magento\TestFramework\App\MutableScopeConfig $mutableScopeConfig)
     {
-        parent::__construct($appConfig);
+        parent::__construct(
+            \Magento\TestFramework\ObjectManager::getInstance()->get(\Magento\Framework\App\Config\ScopePool::class),
+            $appConfig
+        );
         $this->mutableScopeConfig = $mutableScopeConfig;
     }
 

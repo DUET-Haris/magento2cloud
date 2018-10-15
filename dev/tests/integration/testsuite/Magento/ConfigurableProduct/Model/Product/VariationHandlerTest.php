@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,12 +9,13 @@
 namespace Magento\ConfigurableProduct\Model\Product;
 
 use Magento\TestFramework\Helper\Bootstrap;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 
 /**
  * @magentoAppIsolation enabled
  * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
  */
-class VariationHandlerTest extends \PHPUnit\Framework\TestCase
+class VariationHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\ConfigurableProduct\Model\Product\VariationHandler */
     private $_model;
@@ -27,19 +28,15 @@ class VariationHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->_product = Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
-        );
-        $this->_product->load(1);
+        $productRepository = Bootstrap::getObjectManager()->create(ProductRepositoryInterface::class);
+        $this->_product = $productRepository->get('configurable');
 
         $this->_model = Bootstrap::getObjectManager()->create(
-            \Magento\ConfigurableProduct\Model\Product\VariationHandler::class
+            'Magento\ConfigurableProduct\Model\Product\VariationHandler'
         );
         // prevent fatal errors by assigning proper "singleton" of type instance to the product
         $this->_product->setTypeInstance($this->_model);
-        $this->stockRegistry = Bootstrap::getObjectManager()->get(
-            \Magento\CatalogInventory\Api\StockRegistryInterface::class
-        );
+        $this->stockRegistry = Bootstrap::getObjectManager()->get('Magento\CatalogInventory\Api\StockRegistryInterface');
     }
 
     /**
@@ -56,7 +53,7 @@ class VariationHandlerTest extends \PHPUnit\Framework\TestCase
             $stockItem = $this->stockRegistry->getStockItem($productId);
             /** @var $product \Magento\Catalog\Model\Product */
             $product = Bootstrap::getObjectManager()->create(
-                \Magento\Catalog\Model\Product::class
+                'Magento\Catalog\Model\Product'
             );
             $product->load($productId);
             $this->assertNotNull($product->getName());

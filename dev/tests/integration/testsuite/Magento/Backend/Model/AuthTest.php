@@ -1,11 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Backend\Model;
 
-use Magento\Framework\Data\Form\FormKey;
 use Magento\Framework\Exception\AuthenticationException;
 
 /**
@@ -15,7 +14,7 @@ use Magento\Framework\Exception\AuthenticationException;
  * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
  */
-class AuthTest extends \PHPUnit\Framework\TestCase
+class AuthTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Backend\Model\Auth
@@ -29,7 +28,7 @@ class AuthTest extends \PHPUnit\Framework\TestCase
         \Magento\TestFramework\Helper\Bootstrap::getInstance()
             ->loadArea(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE);
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Backend\Model\Auth::class);
+            ->create('Magento\Backend\Model\Auth');
     }
 
     /**
@@ -54,11 +53,11 @@ class AuthTest extends \PHPUnit\Framework\TestCase
     public function testSetGetAuthStorage()
     {
         // by default \Magento\Backend\Model\Auth\Session class will instantiate as a Authentication Storage
-        $this->assertInstanceOf(\Magento\Backend\Model\Auth\Session::class, $this->_model->getAuthStorage());
+        $this->assertInstanceOf('Magento\Backend\Model\Auth\Session', $this->_model->getAuthStorage());
 
-        $mockStorage = $this->createMock(\Magento\Backend\Model\Auth\StorageInterface::class);
+        $mockStorage = $this->getMock('Magento\Backend\Model\Auth\StorageInterface');
         $this->_model->setAuthStorage($mockStorage);
-        $this->assertInstanceOf(\Magento\Backend\Model\Auth\StorageInterface::class, $this->_model->getAuthStorage());
+        $this->assertInstanceOf('Magento\Backend\Model\Auth\StorageInterface', $this->_model->getAuthStorage());
 
         $incorrectStorage = new \StdClass();
         try {
@@ -73,7 +72,7 @@ class AuthTest extends \PHPUnit\Framework\TestCase
     public function testGetCredentialStorageList()
     {
         $storage = $this->_model->getCredentialStorage();
-        $this->assertInstanceOf(\Magento\Backend\Model\Auth\Credential\StorageInterface::class, $storage);
+        $this->assertInstanceOf('Magento\Backend\Model\Auth\Credential\StorageInterface', $storage);
     }
 
     public function testLoginSuccessful()
@@ -82,24 +81,8 @@ class AuthTest extends \PHPUnit\Framework\TestCase
             \Magento\TestFramework\Bootstrap::ADMIN_NAME,
             \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
         );
-        $this->assertInstanceOf(
-            \Magento\Backend\Model\Auth\Credential\StorageInterface::class,
-            $this->_model->getUser()
-        );
+        $this->assertInstanceOf('Magento\Backend\Model\Auth\Credential\StorageInterface', $this->_model->getUser());
         $this->assertGreaterThan(time() - 10, $this->_model->getAuthStorage()->getUpdatedAt());
-    }
-
-    public function testLoginFlushesFormKey()
-    {
-        /** @var FormKey $dataFormKey */
-        $dataFormKey = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(FormKey::class);
-        $beforeKey = $dataFormKey->getFormKey();
-        $this->_model->login(
-            \Magento\TestFramework\Bootstrap::ADMIN_NAME,
-            \Magento\TestFramework\Bootstrap::ADMIN_PASSWORD
-        );
-        $afterKey = $dataFormKey->getFormKey();
-        $this->assertNotEquals($beforeKey, $afterKey);
     }
 
     /**
@@ -138,9 +121,6 @@ class AuthTest extends \PHPUnit\Framework\TestCase
 
         $this->assertNotNull($this->_model->getUser());
         $this->assertGreaterThan(0, $this->_model->getUser()->getId());
-        $this->assertInstanceOf(
-            \Magento\Backend\Model\Auth\Credential\StorageInterface::class,
-            $this->_model->getUser()
-        );
+        $this->assertInstanceOf('Magento\Backend\Model\Auth\Credential\StorageInterface', $this->_model->getUser());
     }
 }

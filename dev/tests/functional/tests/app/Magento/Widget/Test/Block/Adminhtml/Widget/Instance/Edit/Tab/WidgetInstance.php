@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -81,7 +81,7 @@ class WidgetInstance extends Tab
     protected function getTemplateBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Backend\Test\Block\Template::class,
+            'Magento\Backend\Test\Block\Template',
             ['element' => $this->_rootElement->find($this->templateBlock, Locator::SELECTOR_XPATH)]
         );
     }

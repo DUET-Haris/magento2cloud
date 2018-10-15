@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /** @var \Magento\Framework\Filesystem\Directory\Write $mediaDirectory */
 $mediaDirectory = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-    \Magento\Framework\Filesystem::class
+    'Magento\Framework\Filesystem'
 )->getDirectoryWrite(
     \Magento\Framework\App\Filesystem\DirectoryList::MEDIA
 );

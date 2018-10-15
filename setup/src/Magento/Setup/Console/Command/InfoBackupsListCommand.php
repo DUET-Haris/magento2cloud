@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -87,7 +87,7 @@ class InfoBackupsListCommand extends Command
             }
             if (empty($tempTable)) {
                 $output->writeln('<info>No backup files found.</info>');
-                return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
+                return;
             }
             $output->writeln("<info>Showing backup files in $backupsDir.</info>");
             /** @var \Symfony\Component\Console\Helper\Table $table */
@@ -101,7 +101,5 @@ class InfoBackupsListCommand extends Command
         } else {
             $output->writeln('<info>No backup files found.</info>');
         }
-
-        return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
     }
 }

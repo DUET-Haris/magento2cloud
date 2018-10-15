@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -22,12 +22,12 @@ class UserAccountForgotPassword extends Page
      */
     protected $blocks = [
         'messagesBlock' => [
-            'class' => \Magento\Backend\Test\Block\Messages::class,
+            'class' => 'Magento\Backend\Test\Block\Messages',
             'locator' => '.messages',
             'strategy' => 'css selector',
         ],
         'forgotPasswordForm' => [
-            'class' => \Magento\Security\Test\Block\Form\ForgotPassword::class,
+            'class' => 'Magento\Security\Test\Block\Form\ForgotPassword',
             'locator' => '#login-form',
             'strategy' => 'css selector',
         ],

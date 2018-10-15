@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -22,13 +22,14 @@ use Magento\Search\Test\Fixture\SynonymGroup;
  * 3. Delete created Synonym Group
  * 4. Perform all assertions.
  *
- * @group Search
+ * @group Search_(MX)
  * @ZephyrId MAGETWO-47683
  */
 class DeleteSynonymGroupEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     const TEST_TYPE = 'extended_acceptance_test';
     /* end tags */
 

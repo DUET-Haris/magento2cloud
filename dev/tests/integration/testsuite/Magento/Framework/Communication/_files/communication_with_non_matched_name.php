@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -15,14 +15,14 @@ return [
                         'param_name' => 'customer',
                         'param_position' => 0,
                         'is_required' => true,
-                        'param_type' => \Magento\Customer\Api\Data\CustomerInterface::class,
+                        'param_type' => 'Magento\Customer\Api\Data\CustomerInterface',
                     ],
                 ],
                 'request_type' => 'service_method_interface',
                 'response' => 'bool',
                 'handlers' => [
                     'customHandler' => [
-                        'type' => \Magento\Customer\Api\CustomerRepositoryInterface::class,
+                        'type' => 'Magento\Customer\Api\CustomerRepositoryInterface',
                         'method' => 'deleteById',
                     ],
                 ],

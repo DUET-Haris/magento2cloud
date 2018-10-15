@@ -1,26 +1,20 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Setup\Fixtures;
 
 /**
- * Fixture for generating catalog price rules
- *
- * Support the following format:
- * <!-- Number of catalog price rules -->
- * <catalog_price_rules>{int}</catalog_price_rules>
- *
- * @see setup/performance-toolkit/profiles/ce/small.xml
+ * Class CatalogPriceRulesFixture
  */
 class CatalogPriceRulesFixture extends Fixture
 {
     /**
      * @var int
      */
-    protected $priority = 90;
+    protected $priority = 80;
 
     /**
      * {@inheritdoc}
@@ -35,15 +29,14 @@ class CatalogPriceRulesFixture extends Fixture
         $this->fixtureModel->resetObjectManager();
 
         /** @var \Magento\Store\Model\StoreManager $storeManager */
-        $storeManager = $this->fixtureModel->getObjectManager()->create(\Magento\Store\Model\StoreManager::class);
+        $storeManager = $this->fixtureModel->getObjectManager()->create('Magento\Store\Model\StoreManager');
         /** @var $category \Magento\Catalog\Model\Category */
-        $category = $this->fixtureModel->getObjectManager()->get(\Magento\Catalog\Model\Category::class);
+        $category = $this->fixtureModel->getObjectManager()->get('Magento\Catalog\Model\Category');
         /** @var $model  \Magento\CatalogRule\Model\Rule*/
-        $model = $this->fixtureModel->getObjectManager()->get(\Magento\CatalogRule\Model\Rule::class);
+        $model = $this->fixtureModel->getObjectManager()->get('Magento\CatalogRule\Model\Rule');
         /** @var \Magento\Framework\EntityManager\MetadataPool $metadataPool */
-        $metadataPool = $this->fixtureModel->getObjectManager()
-            ->get(\Magento\Framework\EntityManager\MetadataPool::class);
-        $metadata = $metadataPool->getMetadata(\Magento\CatalogRule\Api\Data\RuleInterface::class);
+        $metadataPool = $this->fixtureModel->getObjectManager()->get('Magento\Framework\EntityManager\MetadataPool');
+        $metadata = $metadataPool->getMetadata('Magento\CatalogRule\Api\Data\RuleInterface');
 
         //Get all websites
         $categoriesArray = [];
@@ -92,13 +85,13 @@ class CatalogPriceRulesFixture extends Fixture
                 'rule'                  => [
                     'conditions' => [
                         1 => [
-                            'type' => \Magento\CatalogRule\Model\Rule\Condition\Combine::class,
+                            'type' => 'Magento\\CatalogRule\\Model\\Rule\\Condition\\Combine',
                             'aggregator' => 'all',
                             'value' => '1',
                             'new_child' => '',
                         ],
                         '1--1' => [
-                            'type' => \Magento\CatalogRule\Model\Rule\Condition\Product::class,
+                            'type' => 'Magento\\CatalogRule\\Model\\Rule\\Condition\\Product',
                             'attribute' => 'category_ids',
                             'operator' => '==',
                             'value' => $categoriesArray[$i % count($categoriesArray)][0],
@@ -138,6 +131,7 @@ class CatalogPriceRulesFixture extends Fixture
             $model->setUseAutoGeneration($useAutoGeneration);
             $model->save();
         }
+
     }
 
     /**

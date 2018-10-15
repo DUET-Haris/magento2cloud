@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Console\Command;
@@ -10,7 +10,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * @magentoComponentsDir Magento/Setup/Console/Command/_files/root/app/code
  */
-class I18nPackCommandTest extends \PHPUnit\Framework\TestCase
+class I18nPackCommandTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var I18nCollectPhrasesCommand
@@ -60,6 +60,7 @@ class I18nPackCommandTest extends \PHPUnit\Framework\TestCase
         $this->assertFileExists($basePath . '/Magento/B/i18n/de_DE.csv');
         $this->assertFileExists($basePath . '/Magento/C/i18n/de_DE.csv');
         $this->assertFileExists($basePath . '/Magento/D/i18n/de_DE.csv');
+
     }
 
     /**

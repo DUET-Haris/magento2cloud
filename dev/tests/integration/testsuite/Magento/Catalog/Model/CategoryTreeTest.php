@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model;
@@ -14,7 +14,7 @@ namespace Magento\Catalog\Model;
  * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
  */
-class CategoryTreeTest extends \PHPUnit\Framework\TestCase
+class CategoryTreeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Catalog\Model\Category
@@ -24,7 +24,7 @@ class CategoryTreeTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
     }
 
@@ -125,15 +125,7 @@ class CategoryTreeTest extends \PHPUnit\Framework\TestCase
     public function testGetChildren()
     {
         $this->_model->load(3);
-        $this->assertEquals(array_diff([4, 13], explode(',', $this->_model->getChildren())), []);
-    }
-
-    public function testGetChildrenSorted()
-    {
-        $this->_model->load(2);
-        $unsorted = explode(',', $this->_model->getChildren());
-        sort($unsorted);
-        $this->assertEquals(array_diff($unsorted, explode(',', $this->_model->getChildren(true, true, true))), []);
+        $this->assertEquals('4,13', $this->_model->getChildren());
     }
 
     public function testGetPathInStore()

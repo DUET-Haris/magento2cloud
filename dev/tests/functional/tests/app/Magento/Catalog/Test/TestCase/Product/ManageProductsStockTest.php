@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -12,21 +12,24 @@ use Magento\Mtf\TestCase\Injectable;
 
 /**
  * Preconditions:
- * 1. Set Configuration
+ * 1. Set Configuration:
+ *      - Display OutOfStock = Yes
+ *      - Backorders - Allow Qty below = 0
  * 2. Create products according to dataset
  *
  * Steps:
  * 1. Open product on frontend
- * 2. Add product to cart if needed
+ * 2. Add product to cart
  * 3. Perform all assertions
  *
- * @group Inventory
- * @ZephyrId MAGETWO-29543, MAGETWO-13645
+ * @group Inventory_(MX)
+ * @ZephyrId MAGETWO-29543
  */
 class ManageProductsStockTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**
@@ -37,13 +40,6 @@ class ManageProductsStockTest extends Injectable
     protected $fixtureFactory;
 
     /**
-     * Configuration data.
-     *
-     * @var string
-     */
-    protected $configData;
-
-    /**
      * Setup configuration.
      *
      * @param FixtureFactory $fixtureFactory
@@ -52,38 +48,31 @@ class ManageProductsStockTest extends Injectable
     public function __inject(FixtureFactory $fixtureFactory)
     {
         $this->fixtureFactory = $fixtureFactory;
+        $this->objectManager->create(
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
+            ['configData' => "display_out_of_stock,backorders_allow_qty_below"]
+        )->run();
     }
 
     /**
      * Manage products stock.
      *
      * @param CatalogProductSimple $product
-     * @param string $skipAddingToCart
-     * @param string $configData
-     * @return mixed
+     * @return array
      */
-    public function test(CatalogProductSimple $product, $skipAddingToCart = null, $configData = null)
+    public function test(CatalogProductSimple $product)
     {
-        $this->configData = $configData;
-        $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-            ['configData' => $this->configData]
-        )->run();
-
         // Preconditions
         $product->persist();
 
         // Steps
-        if (!$skipAddingToCart) {
-            $this->objectManager->create(
-                \Magento\Checkout\Test\TestStep\AddProductsToTheCartStep::class,
-                ['products' => [$product]]
-            )->run();
+        $this->objectManager->create(
+            'Magento\Checkout\Test\TestStep\AddProductsToTheCartStep',
+            ['products' => [$product]]
+        )->run();
 
-            $cart['data']['items'] = ['products' => [$product]];
-
-            return ['cart' => $this->fixtureFactory->createByCode('cart', $cart)];
-        }
+        $cart['data']['items'] = ['products' => [$product]];
+        return ['cart' => $this->fixtureFactory->createByCode('cart', $cart)];
     }
 
     /**
@@ -94,8 +83,8 @@ class ManageProductsStockTest extends Injectable
     public function tearDown()
     {
         $this->objectManager->create(
-            \Magento\Config\Test\TestStep\SetupConfigurationStep::class,
-            ['configData' => $this->configData, 'rollback' => true]
+            'Magento\Config\Test\TestStep\SetupConfigurationStep',
+            ['configData' => "display_out_of_stock,backorders_allow_qty_below", 'rollback' => true]
         )->run();
     }
 }

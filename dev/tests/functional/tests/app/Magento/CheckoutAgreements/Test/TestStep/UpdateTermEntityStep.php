@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CheckoutAgreements\Test\TestStep;
@@ -21,7 +21,6 @@ class UpdateTermEntityStep implements TestStepInterface
      * @var CheckoutAgreement
      */
     protected $agreement;
-
     /**
      * Original checkout agreement data.
      *

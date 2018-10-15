@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -11,7 +11,7 @@ namespace Magento\Test\Legacy;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-class LayoutTest extends \PHPUnit\Framework\TestCase
+class LayoutTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * List of obsolete nodes
@@ -355,9 +355,7 @@ class LayoutTest extends \PHPUnit\Framework\TestCase
             'unsetChild',
             'unsetChildren',
             'updateButton',
-            'setIsProductListingContext',
-            'checkCompanyStatus', // MAGETWO-88965
-            'setRendererType', // MAGETWO-88965
+            'setIsProductListingContext'
         ];
     }
 }

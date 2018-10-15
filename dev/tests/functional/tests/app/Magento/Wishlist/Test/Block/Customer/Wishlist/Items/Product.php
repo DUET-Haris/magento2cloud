@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -79,27 +79,6 @@ class Product extends Form
     protected $price = '.price';
 
     /**
-     * Locator value for item Price in Product Grid.
-     *
-     * @var string
-     */
-    protected $priceInGrid = '.products-grid .price';
-
-    /**
-     * Locator value for item Regular Price.
-     *
-     * @var string
-     */
-    private $regularPrice = '.old-price [data-price-type="oldPrice"] .price';
-
-    /**
-     * Locator value for item Regular Price Label.
-     *
-     * @var string
-     */
-    private $regularPriceLabel = '.old-price .price-label';
-
-    /**
      * Fill item with details.
      *
      * @param array $fields
@@ -144,12 +123,14 @@ class Product extends Form
         $viewDetails = $this->_rootElement->find($this->viewDetails);
         if ($viewDetails->isVisible()) {
             $this->_rootElement->find($this->footer, Locator::SELECTOR_XPATH)->click();
-            $viewDetails->hover();
+            $viewDetails->click();
             $labels = $this->_rootElement->getElements($this->optionLabel);
             $values = $this->_rootElement->getElements($this->optionValue);
             $data = [];
             foreach ($labels as $key => $label) {
-                $viewDetails->hover();
+                if (!$label->isVisible()) {
+                    $viewDetails->click();
+                }
                 $data[] = [
                     'title' => $label->getText(),
                     'value' => str_replace('$', '', $values[$key]->getText()),
@@ -180,52 +161,7 @@ class Product extends Form
      */
     public function hoverProductBlock()
     {
-        $this->_rootElement->find($this->priceInGrid)->hover();
-    }
-
-    /**
-     * Returns product price
-     *
-     * @param string $currency
-     * @return string
-     */
-    public function getPrice($currency = '$')
-    {
-        return $this->getPriceBySelector($this->price, $currency);
-    }
-
-    /**
-     * Returns product regular price.
-     *
-     * @param string $currency
-     * @return string
-     */
-    public function getRegularPrice($currency = '$')
-    {
-        return $this->getPriceBySelector($this->regularPrice, $currency);
-    }
-
-    /**
-     * Returns product price by selector.
-     *
-     * @param string $selector
-     * @param string $currency
-     * @return string
-     */
-    private function getPriceBySelector(string $selector, $currency = '$')
-    {
-        $price = $this->_rootElement->find($selector)->getText();
-        return str_replace($currency, '', $price);
-    }
-
-    /**
-     * Returns product regular price label.
-     *
-     * @return string
-     */
-    public function getPriceLabel()
-    {
-        return (string)$this->_rootElement->find($this->regularPriceLabel)->getText();
+        $this->_rootElement->find($this->price)->hover();
     }
 
     /**

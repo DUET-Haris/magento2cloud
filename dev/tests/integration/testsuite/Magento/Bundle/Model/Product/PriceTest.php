@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Bundle\Model\Product;
@@ -8,7 +8,7 @@ namespace Magento\Bundle\Model\Product;
 /**
  * @magentoDataFixture Magento/Bundle/_files/product_with_tier_pricing.php
  */
-class PriceTest extends \PHPUnit\Framework\TestCase
+class PriceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Bundle\Model\Product\Price
@@ -18,7 +18,7 @@ class PriceTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Bundle\Model\Product\Price::class
+            'Magento\Bundle\Model\Product\Price'
         );
     }
 
@@ -26,7 +26,7 @@ class PriceTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
         $productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-            ->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+            ->create('Magento\Catalog\Api\ProductRepositoryInterface');
         $product = $productRepository->get('bundle-product');
         // fixture
 

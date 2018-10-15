@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Service\V1;
@@ -52,7 +52,7 @@ class CreditmemoAddCommentTest extends WebapiAbstract
     {
         /** @var \Magento\Sales\Model\ResourceModel\Order\Creditmemo\Collection $creditmemoCollection */
         $creditmemoCollection =
-            $this->objectManager->get(\Magento\Sales\Model\ResourceModel\Order\Creditmemo\Collection::class);
+            $this->objectManager->get('Magento\Sales\Model\ResourceModel\Order\Creditmemo\Collection');
         $creditmemo = $creditmemoCollection->getFirstItem();
 
         $commentData = [
@@ -78,9 +78,6 @@ class CreditmemoAddCommentTest extends WebapiAbstract
         ];
 
         $result = $this->_webApiCall($serviceInfo, $requestData);
-
-        self::assertNotEmpty($result);
-        self::assertNotEmpty($result[Comment::ENTITY_ID]);
-        self::assertEquals($creditmemo->getId(), $result[Comment::PARENT_ID]);
+        $this->assertNotEmpty($result);
     }
 }

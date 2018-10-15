@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Code\Reader;
 
 require_once __DIR__ . '/_files/SourceArgumentsReaderTest.php.sample';
 
-class SourceArgumentsReaderTest extends \PHPUnit\Framework\TestCase
+class SourceArgumentsReaderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\Code\Reader\SourceArgumentsReader

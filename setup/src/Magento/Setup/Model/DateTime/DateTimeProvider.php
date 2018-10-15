@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Model\DateTime;
@@ -54,7 +54,7 @@ class DateTimeProvider
     {
         if (!$this->dateTime) {
             $this->dateTime = $this->objectManagerProvider->get()->create(
-                \Magento\Framework\Stdlib\DateTime\DateTime::class,
+                'Magento\Framework\Stdlib\DateTime\DateTime',
                 ['localeDate' => $this->tzProvider->get()]
             );
         }

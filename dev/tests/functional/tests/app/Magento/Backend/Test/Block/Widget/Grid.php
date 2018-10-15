@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -293,7 +293,7 @@ abstract class Grid extends Block
         if ($selectItem->isVisible()) {
             $selectItem->click();
         } else {
-            throw new \Exception("Searched item was not found by filter\n" . print_r($filter, true));
+            throw new \Exception('Searched item was not found.');
         }
     }
 
@@ -351,10 +351,7 @@ abstract class Grid extends Block
         if ($acceptAlert) {
             $element = $this->browser->find($this->confirmModal);
             /** @var \Magento\Ui\Test\Block\Adminhtml\Modal $modal */
-            $modal = $this->blockFactory->create(
-                \Magento\Ui\Test\Block\Adminhtml\Modal::class,
-                ['element' => $element]
-            );
+            $modal = $this->blockFactory->create('Magento\Ui\Test\Block\Adminhtml\Modal', ['element' => $element]);
             $modal->acceptAlert();
         }
     }
@@ -470,7 +467,6 @@ abstract class Grid extends Block
      */
     public function openFirstRow()
     {
-        $this->waitLoader();
         $this->_rootElement->find($this->firstRowSelector, Locator::SELECTOR_XPATH)->click();
     }
 

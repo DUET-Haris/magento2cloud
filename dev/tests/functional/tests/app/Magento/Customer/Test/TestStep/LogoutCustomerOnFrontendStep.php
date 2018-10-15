@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -49,7 +49,7 @@ class LogoutCustomerOnFrontendStep implements TestStepInterface
     {
         $this->customerAccount->open();
         $this->cmsIndex->getCmsPageBlock()->waitPageInit();
-        if ($this->cmsIndex->getTitleBlock()->getTitle() === 'My Account') {
+        if ($this->cmsIndex->getTitleBlock()->getTitle() != 'Customer Login') {
             $this->cmsIndex->getLinksBlock()->openLink('Sign Out');
             $this->cmsIndex->getCmsPageBlock()->waitUntilTextIsVisible('Home Page');
             $this->cmsIndex->getCmsPageBlock()->waitPageInit();

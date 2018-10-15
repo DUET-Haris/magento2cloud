@@ -1,19 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 /** @var \Magento\Framework\Registry $registry */
-$registry = $objectManager->get(\Magento\Framework\Registry::class);
+$registry = $objectManager->get('Magento\Framework\Registry');
 
 $registry->unregister('isSecureArea');
 $registry->register('isSecureArea', true);
 
 // Remove products
 /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-$productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+$productRepository = $objectManager->create('Magento\Catalog\Api\ProductRepositoryInterface');
 $productsToDelete = ['simple', '12345', 'simple-3', 'simple-4'];
 
 foreach ($productsToDelete as $sku) {
@@ -27,7 +27,7 @@ foreach ($productsToDelete as $sku) {
 
 //Remove categories
 /** @var Magento\Catalog\Model\ResourceModel\Category\Collection $collection */
-$collection = $objectManager->create(\Magento\Catalog\Model\ResourceModel\Category\Collection::class);
+$collection = $objectManager->create('Magento\Catalog\Model\ResourceModel\Category\Collection');
 foreach ($collection->addAttributeToFilter('level', ['in' => [2, 3, 4]]) as $category) {
     /** @var \Magento\Catalog\Model\Category $category */
     $category->delete();

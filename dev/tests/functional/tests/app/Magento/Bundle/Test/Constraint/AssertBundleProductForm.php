@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -52,7 +52,6 @@ class AssertBundleProductForm extends AssertProductForm
     protected function prepareBundleOptions(array $bundleSelections)
     {
         foreach ($bundleSelections as &$item) {
-            unset($item['frontend_type']);
             foreach ($item['assigned_products'] as &$selection) {
                 $selection['data']['getProductName'] = $selection['search_data']['name'];
                 $selection = $selection['data'];

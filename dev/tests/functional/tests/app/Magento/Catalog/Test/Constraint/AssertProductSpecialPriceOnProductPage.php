@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -64,7 +64,7 @@ class AssertProductSpecialPriceOnProductPage extends AbstractConstraint implemen
     public function assertPrice(FixtureInterface $product, View $productViewBlock)
     {
         $fields = $product->getData();
-        $specialPrice = $productViewBlock->getPriceBlock($product)->getSpecialPrice();
+        $specialPrice = $productViewBlock->getPriceBlock()->getSpecialPrice();
         if (isset($fields['special_price'])) {
             \PHPUnit_Framework_Assert::assertEquals(
                 number_format($fields['special_price'], 2),

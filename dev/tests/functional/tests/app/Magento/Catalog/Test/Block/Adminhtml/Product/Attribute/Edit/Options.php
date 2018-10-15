@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -68,7 +68,7 @@ class Options extends SimpleElement
     protected function getFormInstance(SimpleElement $element = null)
     {
         return ObjectManager::getInstance()->create(
-            \Magento\Catalog\Test\Block\Adminhtml\Product\Attribute\Edit\Tab\Options\Option::class,
+            'Magento\Catalog\Test\Block\Adminhtml\Product\Attribute\Edit\Tab\Options\Option',
             ['element' => $element === null ? $this->find($this->option . ':last-child') : $element]
         );
     }

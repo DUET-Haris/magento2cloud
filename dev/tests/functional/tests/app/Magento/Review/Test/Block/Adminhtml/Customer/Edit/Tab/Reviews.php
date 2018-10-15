@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -28,7 +28,7 @@ class Reviews extends Tab
     public function getReviewsGrid()
     {
         return $this->blockFactory->create(
-            \Magento\Review\Test\Block\Adminhtml\Grid::class,
+            'Magento\Review\Test\Block\Adminhtml\Grid',
             ['element' => $this->_rootElement->find($this->reviews)]
         );
     }

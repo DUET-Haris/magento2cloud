@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -9,13 +9,14 @@ namespace Magento\Test\Less;
 use Magento\Framework\App\Utility;
 use Magento\TestFramework\CodingStandard\Tool\CodeSniffer;
 use Magento\TestFramework\CodingStandard\Tool\CodeSniffer\LessWrapper;
+use PHPUnit_Framework_TestCase;
 use Magento\Framework\App\Utility\Files;
 use Magento\Test\Php\LiveCodeTest as PHPCodeTest;
 
 /**
  * Set of tests for static code style
  */
-class LiveCodeTest extends \PHPUnit\Framework\TestCase
+class LiveCodeTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var string
@@ -42,7 +43,7 @@ class LiveCodeTest extends \PHPUnit\Framework\TestCase
      */
     public function testCodeStyle()
     {
-        $reportFile = self::$reportDir . '/csless_report.txt';
+        $reportFile = self::$reportDir . '/less_report.txt';
         $wrapper = new LessWrapper();
         $codeSniffer = new CodeSniffer(realpath(__DIR__ . '/_files/lesscs'), $reportFile, $wrapper);
 
@@ -56,11 +57,10 @@ class LiveCodeTest extends \PHPUnit\Framework\TestCase
 
         $result = $codeSniffer->run($this->filterFiles($fileList));
 
-        $report = file_exists($reportFile) ? file_get_contents($reportFile) : "";
         $this->assertEquals(
             0,
             $result,
-            "PHP Code Sniffer has found {$result} error(s): " . PHP_EOL . $report
+            "PHP Code Sniffer has found {$result} error(s): See detailed report in {$reportFile}"
         );
     }
 

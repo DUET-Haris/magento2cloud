@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -25,13 +25,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 4. Fill data according to dataset.
  * 5. Perform all assertions.
  *
- * @group URL_Rewrites
+ * @group URL_Rewrites_(MX)
  * @ZephyrId MAGETWO-24819
  */
 class UpdateProductUrlRewriteEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

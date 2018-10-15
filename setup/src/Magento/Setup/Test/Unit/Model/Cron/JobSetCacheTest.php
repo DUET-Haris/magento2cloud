@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Model\Cron;
@@ -10,38 +10,32 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputArgument;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
-class JobSetCacheTest extends \PHPUnit\Framework\TestCase
+class JobSetCacheTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider setCacheDataProvider
      * @param string $commandClass
-     * @param array $arrayInput
+     * @param string $arrayInput
      * @param string $jobName
      * @param array $params
      */
     public function testSetCache($commandClass, $arrayInput, $jobName, $params)
     {
-        $arrayInput = new ArrayInput($arrayInput);
-        $objectManagerProvider = $this->createMock(\Magento\Setup\Model\ObjectManagerProvider::class);
-        $objectManager =
-            $this->getMockForAbstractClass(\Magento\Framework\ObjectManagerInterface::class, [], '', false);
-        $cleanupFiles = $this->createMock(\Magento\Framework\App\State\CleanupFiles::class);
-        $cache = $this->createMock(\Magento\Framework\App\Cache::class);
+        $objectManagerProvider = $this->getMock('Magento\Setup\Model\ObjectManagerProvider', [], [], '', false);
+        $objectManager = $this->getMockForAbstractClass('Magento\Framework\ObjectManagerInterface', [], '', false);
+        $cleanupFiles = $this->getMock('Magento\Framework\App\State\CleanupFiles', [], [], '', false);
+        $cache = $this->getMock('Magento\Framework\App\Cache', [], [], '', false);
         $valueMap = [
-            [ \Magento\Framework\Module\PackageInfoFactory::class],
-            [ \Magento\Framework\App\State\CleanupFiles::class, $cleanupFiles],
-            [ \Magento\Framework\App\Cache::class, $cache],
+            ['Magento\Framework\Module\PackageInfoFactory'],
+            ['Magento\Framework\App\State\CleanupFiles', $cleanupFiles],
+            ['Magento\Framework\App\Cache', $cache],
         ];
         $objectManager->expects($this->atLeastOnce())->method('get')->will($this->returnValueMap($valueMap));
         $objectManagerProvider->expects($this->once())->method('get')->willReturn($objectManager);
-
-        $output =
-            $this->getMockForAbstractClass(\Symfony\Component\Console\Output\OutputInterface::class, [], '', false);
-        $status = $this->createMock(\Magento\Setup\Model\Cron\Status::class);
-        $command = $this->createMock($commandClass);
+        
+        $output = $this->getMockForAbstractClass('Symfony\Component\Console\Output\OutputInterface', [], '', false);
+        $status = $this->getMock('Magento\Setup\Model\Cron\Status', [], [], '', false);
+        $command = $this->getMock($commandClass, [], [], '', false);
 
         $command->expects($this->once())
             ->method('run')
@@ -52,7 +46,7 @@ class JobSetCacheTest extends \PHPUnit\Framework\TestCase
             new InputArgument('command', InputArgument::REQUIRED),
         ]);
 
-        $inputDef = $this->createMock(\Symfony\Component\Console\Input\InputDefinition::class);
+        $inputDef = $this->getMock('\Symfony\Component\Console\Input\InputDefinition', [], [], '', false);
         $inputDef->expects($this->any())->method('hasArgument')->willReturn(true);
         $command->expects($this->any())->method('getDefinition')->willReturn($inputDef);
         $command->expects($this->any())->method('setDefinition')->with($definition);
@@ -66,19 +60,11 @@ class JobSetCacheTest extends \PHPUnit\Framework\TestCase
      */
     public function setCacheDataProvider()
     {
+        $cacheEnable = new ArrayInput(['command' => 'cache:enable', 'types' => ['cache1']]);
+        $cacheDisable = new ArrayInput(['command' => 'cache:disable']);
         return [
-            [
-                \Magento\Backend\Console\Command\CacheEnableCommand::class,
-                ['command' => 'cache:enable', 'types' => ['cache1']],
-                'setup:cache:enable',
-                ['cache1']
-            ],
-            [
-                \Magento\Backend\Console\Command\CacheDisableCommand::class,
-                ['command' => 'cache:disable'],
-                'setup:cache:disable',
-                []
-            ],
+            ['Magento\Backend\Console\Command\CacheEnableCommand', $cacheEnable, 'setup:cache:enable', ['cache1']],
+            ['Magento\Backend\Console\Command\CacheDisableCommand', $cacheDisable, 'setup:cache:disable', []],
         ];
     }
 }

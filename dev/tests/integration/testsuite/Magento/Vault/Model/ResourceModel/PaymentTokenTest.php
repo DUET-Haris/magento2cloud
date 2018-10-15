@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Vault\Model\ResourceModel;
@@ -14,7 +14,7 @@ use Magento\TestFramework\Helper\Bootstrap;
 use Magento\Vault\Model\PaymentTokenManagement;
 use Magento\Vault\Setup\InstallSchema;
 
-class PaymentTokenTest extends \PHPUnit\Framework\TestCase
+class PaymentTokenTest extends \PHPUnit_Framework_TestCase
 {
     const CUSTOMER_ID = 1;
     const TOKEN = 'mx29vk';

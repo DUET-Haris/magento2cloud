@@ -1,20 +1,19 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\SalesRule\Test\TestCase;
 
-use Magento\Catalog\Test\Fixture\CatalogProductSimple;
-use Magento\Customer\Test\Fixture\Customer;
-use Magento\Mtf\Fixture\FixtureFactory;
-use Magento\Mtf\TestCase\Injectable;
-use Magento\SalesRule\Test\Block\Adminhtml\Promo\Quote\Edit\Section\ManageCouponCode;
 use Magento\SalesRule\Test\Fixture\SalesRule;
 use Magento\SalesRule\Test\Page\Adminhtml\PromoQuoteEdit;
 use Magento\SalesRule\Test\Page\Adminhtml\PromoQuoteIndex;
 use Magento\SalesRule\Test\Page\Adminhtml\PromoQuoteNew;
+use Magento\Mtf\Fixture\FixtureFactory;
+use Magento\Mtf\TestCase\Injectable;
+use Magento\Catalog\Test\Fixture\CatalogProductSimple;
+use Magento\Customer\Test\Fixture\Customer;
 
 /**
  * Precondition:
@@ -28,13 +27,14 @@ use Magento\SalesRule\Test\Page\Adminhtml\PromoQuoteNew;
  * 3. Create Cart Price rule according to dataset and click "Save" button.
  * 4. Perform asserts.
  *
- * @group Shopping_Cart_Price_Rules
+ * @group Shopping_Cart_Price_Rules_(CS)
  * @ZephyrId MAGETWO-24855
  */
 class CreateSalesRuleEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     const TEST_TYPE = 'extended_acceptance_test';
     /* end tags */
 
@@ -108,8 +108,7 @@ class CreateSalesRuleEntityTest extends Injectable
         CatalogProductSimple $productForSalesRule1,
         CatalogProductSimple $productForSalesRule2 = null,
         Customer $customer = null,
-        $conditionEntity = null,
-        SalesRule $salesRuleEdit = null
+        $conditionEntity = null
     ) {
         $replace = null;
         $this->salesRuleName = $salesRule->getName();
@@ -129,22 +128,7 @@ class CreateSalesRuleEntityTest extends Injectable
         // Steps
         $this->promoQuoteNew->open();
         $this->promoQuoteNew->getSalesRuleForm()->fill($salesRule, null, $replace);
-
-        if ($salesRule->getCouponType() == "Auto") {
-            $this->promoQuoteNew->getFormPageActions()->saveAndContinue();
-            $form = $this->promoQuoteEdit->getSalesRuleForm();
-            $form->openSection('manage_coupon_code');
-            /** @var ManageCouponCode $section */
-            $section = $form->getSection('manage_coupon_code');
-            $section->fill($salesRuleEdit);
-            $section->generateCouponCodes();
-            $couponCode = $section->getGeneratedCouponCode();
-            $this->promoQuoteEdit->getFormPageActions()->save();
-
-            return ["couponCode" => $couponCode];
-        } else {
-            $this->promoQuoteNew->getFormPageActions()->save();
-        }
+        $this->promoQuoteNew->getFormPageActions()->save();
     }
 
     /**

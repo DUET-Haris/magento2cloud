@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\Newsletter\Model;
 
-class SubscriberTest extends \PHPUnit\Framework\TestCase
+class SubscriberTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Subscriber

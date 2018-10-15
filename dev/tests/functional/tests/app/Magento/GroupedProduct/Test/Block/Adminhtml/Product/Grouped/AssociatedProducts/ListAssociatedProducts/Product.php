@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -13,13 +13,6 @@ use Magento\Mtf\Block\Form;
  */
 class Product extends Form
 {
-    /**
-     * Selector for product sku field.
-     *
-     * @var string
-     */
-    private $productSku = 'span[data-index="sku"]';
-
     /**
      * Fill product options.
      *
@@ -44,15 +37,5 @@ class Product extends Form
         $newFields = $this->_getData($mapping);
         $newFields['name'] = $this->_rootElement->find('[data-index="name"]')->getText();
         return $newFields;
-    }
-
-    /**
-     * Get product sku.
-     *
-     * @return string
-     */
-    public function getProductSku()
-    {
-        return $this->_rootElement->find($this->productSku)->getText();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 $website = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Store\Model\Website::class);
@@ -51,6 +51,10 @@ if (!$store->load('fixture_third_store', 'code')->getId()) {
     );
     $store->save();
 }
+/* Refresh stores memory cache */
+\Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
+    \Magento\Store\Model\StoreManagerInterface::class
+)->reinitStores();
 
 /* Refresh CatalogSearch index */
 /** @var \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry */

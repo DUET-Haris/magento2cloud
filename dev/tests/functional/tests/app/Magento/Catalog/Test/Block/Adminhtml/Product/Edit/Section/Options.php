@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,6 +8,7 @@ namespace Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section;
 
 use Magento\Mtf\Client\Element\SimpleElement;
 use Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Options\Search\Grid;
+use Magento\Mtf\ObjectManager;
 use Magento\Mtf\Client\ElementInterface;
 use Magento\Mtf\Client\Locator;
 use Magento\Ui\Test\Block\Adminhtml\Section;
@@ -83,13 +84,6 @@ class Options extends Section
     protected $sortRowsData = [];
 
     /**
-     * Locator for file_extension field.
-     *
-     * @var string
-     */
-    private $hintMessage = "div[data-index='file_extension'] div[id^='notice']";
-
-    /**
      * Fill custom options form on tab.
      *
      * @param array $fields
@@ -157,7 +151,7 @@ class Options extends Section
     protected function getSearchGridBlock()
     {
         return $this->blockFactory->create(
-            \Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Options\Search\Grid::class,
+            'Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Options\Search\Grid',
             ['element' => $this->browser->find($this->importGrid)]
         );
     }
@@ -173,7 +167,7 @@ class Options extends Section
     {
         $element = $element ?: $this->_rootElement;
         return $this->blockFactory->create(
-            \Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Options\Row::class,
+            'Magento\Catalog\Test\Block\Adminhtml\Product\Edit\Section\Options\Row',
             ['element' => $element->find(sprintf($this->dynamicDataRow, ++$index))]
         );
     }
@@ -352,54 +346,5 @@ class Options extends Section
         }
 
         return $option;
-    }
-
-    /**
-     * Get values data for option as array.
-     *
-     * @param array $options
-     * @param string $optionType
-     * @param string $optionTitle
-     * @return array
-     */
-    public function getValuesDataForOption(array $options, string $optionType, string $optionTitle)
-    {
-        $rootLocator = sprintf($this->customOptionRow, $optionTitle);
-        $rootElement = $this->_rootElement->find($rootLocator, Locator::SELECTOR_XPATH);
-
-        $formDataItem = [];
-        /** @var AbstractOptions $optionsForm */
-        $optionsForm = $this->blockFactory->create(
-            __NAMESPACE__ . '\Options\Type\\' . $this->optionNameConvert($optionType),
-            ['element' => $rootElement]
-        );
-        $context = $rootElement->find($this->addValue)->isVisible()
-            ? $this->dynamicDataRow
-            : $this->staticDataRow;
-        foreach (array_keys($options) as $key) {
-            $element = $rootElement->find(sprintf($context, $key + 1));
-
-            $dataOptions = $optionsForm->getDataOptions(null, $element);
-
-            $addBefore = $optionsForm->getTextForOptionValues(
-                [
-                    'add_before' => []
-                ],
-                $element
-            );
-            $formDataItem[$key] = array_merge($dataOptions, $addBefore);
-        }
-
-        return $formDataItem;
-    }
-
-    /**
-     * Returns notice-message elements for 'file_extension' fields.
-     *
-     * @return ElementInterface[]
-     */
-    public function getFileOptionElements()
-    {
-        return $this->_rootElement->getElements($this->hintMessage);
     }
 }

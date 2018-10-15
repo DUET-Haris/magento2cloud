@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Observer;
@@ -8,7 +8,7 @@ namespace Magento\Catalog\Observer;
 use Magento\Framework\App\Config\ReinitableConfigInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
-class SwitchPriceAttributeScopeOnConfigChangeTest extends \PHPUnit\Framework\TestCase
+class SwitchPriceAttributeScopeOnConfigChangeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface

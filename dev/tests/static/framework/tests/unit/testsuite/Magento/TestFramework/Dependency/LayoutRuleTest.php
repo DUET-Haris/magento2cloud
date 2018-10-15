@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\TestFramework\Dependency;
 
-class LayoutRuleTest extends \PHPUnit\Framework\TestCase
+class LayoutRuleTest extends \PHPUnit_Framework_TestCase
 {
     public function testNonLayoutGetDependencyInfo()
     {

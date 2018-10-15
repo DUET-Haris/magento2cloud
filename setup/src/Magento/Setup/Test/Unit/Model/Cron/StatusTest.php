@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Test\Unit\Model\Cron;
@@ -8,7 +8,7 @@ namespace Magento\Setup\Test\Unit\Model\Cron;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Setup\Model\Cron\Status;
 
-class StatusTest extends \PHPUnit\Framework\TestCase
+class StatusTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Status
@@ -37,9 +37,9 @@ class StatusTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->filesystem = $this->createMock(\Magento\Framework\Filesystem::class);
+        $this->filesystem = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
         $this->varReaderWriter = $this->getMockForAbstractClass(
-            \Magento\Framework\Filesystem\Directory\WriteInterface::class,
+            'Magento\Framework\Filesystem\Directory\WriteInterface',
             [],
             '',
             false
@@ -47,9 +47,8 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $this->filesystem->expects($this->once())
             ->method('getDirectoryWrite')
             ->will($this->returnValue($this->varReaderWriter));
-        $this->logger = $this->getMockForAbstractClass(\Psr\Log\LoggerInterface::class, [], '', false);
-        $this->setupLoggerFactory =
-            $this->createMock(\Magento\Setup\Model\Cron\SetupLoggerFactory::class);
+        $this->logger = $this->getMockForAbstractClass('\Psr\Log\LoggerInterface', [], '', false);
+        $this->setupLoggerFactory = $this->getMock('\Magento\Setup\Model\Cron\SetupLoggerFactory', [], [], '', false);
         $this->setupLoggerFactory
             ->expects($this->once())
             ->method('create')
@@ -108,7 +107,6 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $this->varReaderWriter->expects($this->at(1))->method('delete');
         $this->status->toggleUpdateInProgress(false);
     }
-
     public function testToggleUpdateInProgressFalseFlagNotExist()
     {
         $this->varReaderWriter->expects($this->at(0))->method('isExist')->willReturn(false);
@@ -140,7 +138,6 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $this->varReaderWriter->expects($this->at(1))->method('delete');
         $this->status->toggleUpdateError(false);
     }
-
     public function testToggleUpdateErrorFalseFlagNotExist()
     {
         $this->varReaderWriter->expects($this->at(0))->method('isExist')->willReturn(false);

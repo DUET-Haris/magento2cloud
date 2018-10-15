@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -18,19 +18,20 @@ use Magento\Customer\Test\Fixture\Customer;
  *  2. Customer is created and assigned to this group.
  * Steps:
  *  1. Log in to backend as admin user.
- *  2. Navigate to Customers > Customer Groups.
+ *  2. Navigate to Stores > Other Settings > Customer Groups.
  *  3. Click on Customer Group from grid.
  *  4. Click on Delete "Customer Group".
  *  5. Confirm in pop-up.
  *  6. Perform all assertions.
  *
- * @group Customer_Groups
+ * @group Customer_Groups_(CS)
  * @ZephyrId MAGETWO-25243
  */
 class DeleteCustomerGroupEntityTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'CS';
     /* end tags */
 
     /**

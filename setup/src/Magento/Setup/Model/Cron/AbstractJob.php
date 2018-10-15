@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Model\Cron;
@@ -76,8 +76,8 @@ abstract class AbstractJob
         $this->params = $params;
 
         $this->objectManager = $objectManagerProvider->get();
-        $this->cleanupFiles = $this->objectManager->get(\Magento\Framework\App\State\CleanupFiles::class);
-        $this->cache = $this->objectManager->get(\Magento\Framework\App\Cache::class);
+        $this->cleanupFiles = $this->objectManager->get('Magento\Framework\App\State\CleanupFiles');
+        $this->cache = $this->objectManager->get('Magento\Framework\App\Cache');
     }
 
     /**

@@ -2,7 +2,7 @@
 /**
  * Obsolete methods
  * Format: array(<method_name = ''>[, <class_scope> = ''[, <replacement>[, <is_deprecated>]]])
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -2155,6 +2155,7 @@ return [
     ['addOrderedQty', 'Magento\Reports\Model\ResourceModel\Product\Collection'],
     ['prepareForProductsInCarts', 'Magento\Reports\Model\ResourceModel\Quote\Collection'],
     ['getOrdersSubSelect', 'Magento\Reports\Model\ResourceModel\Quote\Collection'],
+    ['isOrderIncrementIdUsed', 'Magento\Quote\Model\ResourceModel\Quote'],
     ['isStateProtected', 'Magento\Sales\Model\Order'],
     ['_getBundleOptions', 'Magento\Bundle\Block\Checkout\Cart\Item\Renderer'],
     ['_getSelectionFinalPrice', 'Magento\Bundle\Block\Checkout\Cart\Item\Renderer'],
@@ -2521,7 +2522,4 @@ return [
     ['getDataFormTab', 'Magento\Backend\Test\Block\Widget\Tab', 'Magento\Ui\Test\Block\Adminhtml\AbstractContainer::getFieldsData'],
     ['getBunchImages', 'Magento\CatalogImportExport\Model\Import\Product'],
     ['_isAttributeValueEmpty', 'Magento\Catalog\Model\ResourceModel\AbstractResource'],
-    ['var_dump', ''],
-    ['each', ''],
-    ['isOrderIncrementIdUsed', 'Magento\Quote\Model\ResourceModel\Quote', 'Magento\Sales\Model\OrderIncrementIdChecker::isIncrementIdUsed']
 ];

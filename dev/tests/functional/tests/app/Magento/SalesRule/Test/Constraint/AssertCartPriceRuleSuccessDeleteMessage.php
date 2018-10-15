@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -10,7 +10,7 @@ use Magento\SalesRule\Test\Page\Adminhtml\PromoQuoteIndex;
 use Magento\Mtf\Constraint\AbstractConstraint;
 
 /**
- * Assert sales rule delete message.
+ * Assert sales rule delte message.
  */
 class AssertCartPriceRuleSuccessDeleteMessage extends AbstractConstraint
 {

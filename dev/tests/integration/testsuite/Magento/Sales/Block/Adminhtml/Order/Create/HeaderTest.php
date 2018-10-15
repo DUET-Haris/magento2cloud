@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Block\Adminhtml\Order\Create;
@@ -10,16 +10,14 @@ use Magento\TestFramework\Helper\Bootstrap;
 /**
  * @magentoAppArea adminhtml
  */
-class HeaderTest extends \PHPUnit\Framework\TestCase
+class HeaderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \Magento\Sales\Block\Adminhtml\Order\Create\Header */
     protected $_block;
 
     protected function setUp()
     {
-        $this->_block = Bootstrap::getObjectManager()->create(
-            \Magento\Sales\Block\Adminhtml\Order\Create\Header::class
-        );
+        $this->_block = Bootstrap::getObjectManager()->create('Magento\Sales\Block\Adminhtml\Order\Create\Header');
         parent::setUp();
     }
 
@@ -33,7 +31,7 @@ class HeaderTest extends \PHPUnit\Framework\TestCase
     public function testToHtml($customerId, $storeId, $expectedResult)
     {
         /** @var \Magento\Backend\Model\Session\Quote $session */
-        $session = Bootstrap::getObjectManager()->get(\Magento\Backend\Model\Session\Quote::class);
+        $session = Bootstrap::getObjectManager()->get('Magento\Backend\Model\Session\Quote');
         $session->setCustomerId($customerId);
         $session->setStoreId($storeId);
         $this->assertEquals($expectedResult, $this->_block->toHtml());

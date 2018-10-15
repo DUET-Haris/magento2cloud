@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Sales\Service\V1;
@@ -46,9 +46,7 @@ class ShipmentAddCommentTest extends WebapiAbstract
     public function testShipmentAddComment()
     {
         /** @var \Magento\Sales\Model\ResourceModel\Order\Shipment\Collection $shipmentCollection */
-        $shipmentCollection = $this->objectManager->get(
-            \Magento\Sales\Model\ResourceModel\Order\Shipment\Collection::class
-        );
+        $shipmentCollection = $this->objectManager->get('Magento\Sales\Model\ResourceModel\Order\Shipment\Collection');
         $shipment = $shipmentCollection->getFirstItem();
 
         $commentData = [

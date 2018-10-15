@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
 /** @var $product \Magento\Catalog\Model\Product */
-$product = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$product = $objectManager->create('Magento\Catalog\Model\Product');
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setAttributeSetId(4)
     ->setName('Simple Related Product')
@@ -20,13 +20,13 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->save();
 
 /** @var \Magento\Catalog\Api\Data\ProductLinkInterface $productLink */
-$productLink = $objectManager->create(\Magento\Catalog\Api\Data\ProductLinkInterface::class);
+$productLink = $objectManager->create('Magento\Catalog\Api\Data\ProductLinkInterface');
 $productLink->setSku('simple_with_cross');
 $productLink->setLinkedProductSku('simple');
 $productLink->setPosition(1);
 $productLink->setLinkType('related');
 
-$product = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$product = $objectManager->create('Magento\Catalog\Model\Product');
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setAttributeSetId(4)
     ->setName('Simple Product With Related Product')

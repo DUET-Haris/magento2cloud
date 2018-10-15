@@ -1,19 +1,25 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\ConfigurableImportExport\Model\Import\Product\Type;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Framework\App\Bootstrap;
 use Magento\Framework\App\Filesystem\DirectoryList;
+use Magento\ImportExport\Model\Import;
 
 /**
  * @magentoAppArea adminhtml
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ConfigurableTest extends \PHPUnit\Framework\TestCase
+class ConfigurableTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * Configurable product test Name
+     */
+    const TEST_PRODUCT_NAME = 'Configurable 1';
+
     /**
      * Configurable product test Type
      */
@@ -23,6 +29,13 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
      * @var \Magento\CatalogImportExport\Model\Import\Product
      */
     protected $model;
+
+    /**
+     * Configurable product options SKU list
+     *
+     * @var array
+     */
+    protected $optionSkuList = ['Configurable 1-Option 1', 'Configurable 1-Option 2'];
 
     /**
      * @var \Magento\Framework\ObjectManagerInterface
@@ -43,33 +56,14 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
         $this->productMetadata = $metadataPool->getMetadata(\Magento\Catalog\Api\Data\ProductInterface::class);
     }
 
-    public function configurableImportDataProvider()
-    {
-        return [
-            'Configurable 1' => [
-                __DIR__ . '/../../_files/import_configurable.csv',
-                'Configurable 1',
-                ['Configurable 1-Option 1', 'Configurable 1-Option 2'],
-            ],
-            '12345' => [
-                __DIR__ . '/../../_files/import_configurable_12345.csv',
-                '12345',
-                ['Configurable 1-Option 1', 'Configurable 1-Option 2'],
-            ],
-        ];
-    }
-
     /**
-     * @param $pathToFile Path to import file
-     * @param $productName Name/sku of configurable product
-     * @param $optionSkuList Name of variations for configurable product
      * @magentoDataFixture Magento/ConfigurableProduct/_files/configurable_attribute.php
      * @magentoAppArea adminhtml
-     * @magentoAppIsolation enabled
-     * @dataProvider configurableImportDataProvider
      */
-    public function testConfigurableImport($pathToFile, $productName, $optionSkuList)
+    public function testConfigurableImport()
     {
+        // import data from CSV file
+        $pathToFile = __DIR__ . '/../../_files/import_configurable.csv';
         $filesystem = $this->objectManager->create(
             \Magento\Framework\Filesystem::class
         );
@@ -96,23 +90,23 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Magento\Catalog\Model\ResourceModel\Product $resource */
         $resource = $this->objectManager->get(\Magento\Catalog\Model\ResourceModel\Product::class);
-        $productId = $resource->getIdBySku($productName);
+        $productId = $resource->getIdBySku(self::TEST_PRODUCT_NAME);
         $this->assertTrue(is_numeric($productId));
         /** @var \Magento\Catalog\Model\Product $product */
         $product = $this->objectManager->get(ProductRepositoryInterface::class)->getById($productId);
 
         $this->assertFalse($product->isObjectNew());
-        $this->assertEquals($productName, $product->getName());
+        $this->assertEquals(self::TEST_PRODUCT_NAME, $product->getName());
         $this->assertEquals(self::TEST_PRODUCT_TYPE, $product->getTypeId());
 
         $optionCollection = $product->getTypeInstance()->getConfigurableOptions($product);
         foreach ($optionCollection as $option) {
             foreach ($option as $optionData) {
-                $this->assertContains($optionData['sku'], $optionSkuList);
+                $this->assertContains($optionData['sku'], $this->optionSkuList);
             }
         }
 
-        $optionIdList = $resource->getProductsIdsBySkus($optionSkuList);
+        $optionIdList = $resource->getProductsIdsBySkus($this->optionSkuList);
         foreach ($optionIdList as $optionId) {
             $this->assertArrayHasKey($optionId, $product->getExtensionAttributes()->getConfigurableProductLinks());
         }
@@ -136,7 +130,7 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
             $this->assertArrayHasKey('frontend_label', $productAttributeData);
             $this->assertEquals('Test Configurable', $productAttributeData['frontend_label']);
             $this->assertArrayHasKey('label', $optionData);
-            $this->assertEquals('test_configurable_custom_label', $optionData['label']);
+            $this->assertEquals('test_configurable', $optionData['label']);
             $this->assertArrayHasKey('use_default', $optionData);
             $this->assertArrayHasKey('options', $optionData);
             $this->assertEquals('Option 1', $optionData['options'][0]['label']);
@@ -148,94 +142,6 @@ class ConfigurableTest extends \PHPUnit\Framework\TestCase
             $this->assertArrayHasKey('values', $optionData);
             $valuesData = $optionData['values'];
             $this->assertEquals(2, count($valuesData));
-        }
-    }
-
-    /**
-     * @magentoDataFixture Magento/Store/_files/second_store.php
-     * @magentoDataFixture Magento/ConfigurableProduct/_files/configurable_attribute.php
-     * @magentoAppArea adminhtml
-     * @magentoAppIsolation enabled
-     * @magentoDbIsolation disabled
-     */
-    public function testConfigurableImportWithMultipleStores()
-    {
-        $productSku = 'Configurable 1';
-        $products = [
-            'default' => 'Configurable 1',
-            'fixture_second_store' => 'Configurable 1 Second Store'
-        ];
-        $filesystem = $this->objectManager->create(
-            \Magento\Framework\Filesystem::class
-        );
-
-        $directory = $filesystem->getDirectoryWrite(DirectoryList::ROOT);
-        $source = $this->objectManager->create(
-            \Magento\ImportExport\Model\Import\Source\Csv::class,
-            [
-                'file' =>  __DIR__ . '/../../_files/import_configurable_for_multiple_store_views.csv',
-                'directory' => $directory
-            ]
-        );
-        $errors = $this->model->setSource(
-            $source
-        )->setParameters(
-            [
-                'behavior' => \Magento\ImportExport\Model\Import::BEHAVIOR_APPEND,
-                'entity' => 'catalog_product'
-            ]
-        )->validateData();
-
-        $this->assertTrue($errors->getErrorsCount() == 0);
-        $this->model->importData();
-
-        foreach ($products as $storeCode => $productName) {
-            $store = $this->objectManager->create(\Magento\Store\Model\Store::class);
-            $store->load($storeCode, 'code');
-            /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-            $productRepository = $this->objectManager->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-            /** @var \Magento\Catalog\Api\Data\ProductInterface $product */
-            $product = $productRepository->get($productSku, 0, $store->getId());
-            $this->assertFalse($product->isObjectNew());
-            $this->assertEquals($productName, $product->getName());
-            $this->assertEquals(self::TEST_PRODUCT_TYPE, $product->getTypeId());
-        }
-    }
-
-    /**
-     * @magentoDataFixture Magento/Store/_files/second_store.php
-     * @magentoDataFixture Magento/ConfigurableProduct/_files/configurable_attribute.php
-     * @magentoDbIsolation disabled
-     * @magentoAppArea adminhtml
-     */
-    public function testConfigurableImportWithStoreSpecifiedMainItem()
-    {
-        {
-            $expectedErrorMessage = 'Product with assigned super attributes should not have specified "store_view_code"'
-                . ' value';
-            $filesystem = $this->objectManager->create(
-                \Magento\Framework\Filesystem::class
-            );
-
-            $directory = $filesystem->getDirectoryWrite(DirectoryList::ROOT);
-            $source = $this->objectManager->create(
-                \Magento\ImportExport\Model\Import\Source\Csv::class,
-                [
-                    'file' =>  __DIR__ . '/../../_files/import_configurable_for_multiple_store_views_error.csv',
-                    'directory' => $directory
-                ]
-            );
-            $errors = $this->model->setSource(
-                $source
-            )->setParameters(
-                [
-                    'behavior' => \Magento\ImportExport\Model\Import::BEHAVIOR_APPEND,
-                    'entity' => 'catalog_product'
-                ]
-            )->validateData();
-
-            $this->assertTrue($errors->getErrorsCount() == 1);
-            $this->assertEquals($expectedErrorMessage, $errors->getAllErrors()[0]->getErrorMessage());
         }
     }
 }

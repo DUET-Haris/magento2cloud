@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -22,13 +22,14 @@ use Magento\Mtf\TestCase\Injectable;
  * 5. Save
  * 6. Perform all assertions
  *
- * @group Products
+ * @group Products_(MX)
  * @ZephyrId MAGETWO-29398
  */
 class ProductTypeSwitchingOnCreationTest extends Injectable
 {
     /* tags */
     const MVP = 'yes';
+    const DOMAIN = 'MX';
     /* end tags */
 
     /**

@@ -1,11 +1,11 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\TestFramework\Dependency;
 
-class PhpRuleTest extends \PHPUnit\Framework\TestCase
+class PhpRuleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var PhpRule
@@ -208,6 +208,7 @@ class PhpRuleTest extends \PHPUnit\Framework\TestCase
             ]
         ];
     }
+
 
     /**
      * Make some fake filepath to correspond to the class name

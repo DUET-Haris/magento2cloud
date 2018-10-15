@@ -1,16 +1,17 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Vault\Test\TestStep;
 
+use Magento\Mtf\Fixture\FixtureFactory;
 use Magento\Mtf\TestStep\TestStepInterface;
 use Magento\Payment\Test\Fixture\CreditCard;
 use Magento\Sales\Test\Page\Adminhtml\OrderCreateIndex;
 
 /**
- * Save credit card during order placement from Admin.
+ * Class SaveCreditCardOnBackendStep
  */
 class SaveCreditCardOnBackendStep implements TestStepInterface
 {
@@ -43,18 +44,22 @@ class SaveCreditCardOnBackendStep implements TestStepInterface
     /**
      * @param OrderCreateIndex $orderCreateIndex
      * @param array $payment
-     * @param CreditCard $creditCard
+     * @param FixtureFactory $fixtureFactory
+     * @param $creditCardClass
+     * @param array $creditCard
      * @param string $creditCardSave
      */
     public function __construct(
         OrderCreateIndex $orderCreateIndex,
         array $payment,
-        CreditCard $creditCard,
+        FixtureFactory $fixtureFactory,
+        $creditCardClass,
+        array $creditCard,
         $creditCardSave = 'No'
     ) {
         $this->orderCreatePage = $orderCreateIndex;
         $this->payment = $payment;
-        $this->creditCard = $creditCard;
+        $this->creditCard = $fixtureFactory->createByCode($creditCardClass, ['dataset' => $creditCard['dataset']]);
         $this->creditCardSave = $creditCardSave;
     }
 

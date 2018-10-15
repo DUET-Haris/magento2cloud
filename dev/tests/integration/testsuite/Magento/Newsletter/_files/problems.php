@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 require __DIR__ . '/queue.php';
 
 $problem = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Newsletter\Model\Problem::class);
+    ->create('Magento\Newsletter\Model\Problem');
 // $firstSubscriberId comes from subscribers.php
 $problem->setSubscriberId($firstSubscriberId)
     ->setQueueId($queue->getQueueId())

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -30,7 +30,7 @@ class WsdlGenerationFromDataObjectTest extends \Magento\TestFramework\TestCase\W
     protected function setUp()
     {
         $this->_markTestAsSoapOnly("WSDL generation tests are intended to be executed for SOAP adapter only.");
-        $this->_storeCode = Bootstrap::getObjectManager()->get(\Magento\Store\Model\StoreManagerInterface::class)
+        $this->_storeCode = Bootstrap::getObjectManager()->get('Magento\Store\Model\StoreManagerInterface')
             ->getStore()->getCode();
         parent::setUp();
     }

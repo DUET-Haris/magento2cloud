@@ -1,10 +1,10 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 \Magento\TestFramework\Helper\Bootstrap::getInstance()->loadArea('frontend');
-$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+$product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Catalog\Model\Product');
 $product->setTypeId('simple')
     ->setId(1)
     ->setAttributeSetId(4)
@@ -25,12 +25,12 @@ $product->setTypeId('simple')
     )->save();
 
 $productRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+    ->create('Magento\Catalog\Api\ProductRepositoryInterface');
 $product = $productRepository->get('simple');
 
 $addressData = include __DIR__ . '/address_data.php';
 $billingAddress = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-    \Magento\Quote\Model\Quote\Address::class,
+    'Magento\Quote\Model\Quote\Address',
     ['data' => $addressData]
 );
 $billingAddress->setAddressType('billing');
@@ -39,11 +39,11 @@ $shippingAddress = clone $billingAddress;
 $shippingAddress->setId(null)->setAddressType('shipping');
 
 $store = Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->get(\Magento\Store\Model\StoreManagerInterface::class)
+    ->get('Magento\Store\Model\StoreManagerInterface')
     ->getStore();
 
 /** @var \Magento\Quote\Model\Quote $quote */
-$quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(\Magento\Quote\Model\Quote::class);
+$quote = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create('Magento\Quote\Model\Quote');
 $quote->setCustomerIsGuest(true)
     ->setStoreId($store->getId())
     ->setReservedOrderId('test01')
@@ -53,14 +53,11 @@ $quote->setCustomerIsGuest(true)
 $quote->getPayment()->setMethod('checkmo');
 $quote->setIsMultiShipping('1');
 $quote->collectTotals();
-
-$quoteRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Quote\Api\CartRepositoryInterface::class);
-$quoteRepository->save($quote);
+$quote->save();
 
 /** @var \Magento\Quote\Model\QuoteIdMask $quoteIdMask */
 $quoteIdMask = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
-    ->create(\Magento\Quote\Model\QuoteIdMaskFactory::class)
+    ->create('Magento\Quote\Model\QuoteIdMaskFactory')
     ->create();
 $quoteIdMask->setQuoteId($quote->getId());
 $quoteIdMask->setDataChanges(true);

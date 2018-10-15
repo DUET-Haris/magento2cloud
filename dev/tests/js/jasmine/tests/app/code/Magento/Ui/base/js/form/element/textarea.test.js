@@ -1,49 +1,23 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
+/*eslint max-nested-callbacks: 0*/
+
 define([
-    'squire'
-], function (Squire) {
+    'Magento_Ui/js/form/element/textarea'
+], function (TextareaElement) {
     'use strict';
 
     describe('Magento_Ui/js/form/element/textarea', function () {
-        var injector = new Squire(),
-            mocks = {
-                'Magento_Ui/js/lib/registry/registry': {
-                    /** Method stub. */
-                    get: function () {
-                        return {
-                            get: jasmine.createSpy(),
-                            set: jasmine.createSpy()
-                        };
-                    },
-                    options: jasmine.createSpy(),
-                    create: jasmine.createSpy(),
-                    set: jasmine.createSpy(),
-                    async: jasmine.createSpy()
-                },
-                '/mage/utils/wrapper': jasmine.createSpy()
-            },
-            model,
-            dataScope = 'dataScope';
+        var params, model;
 
-        beforeEach(function (done) {
-            injector.mock(mocks);
-            injector.require([
-                'Magento_Ui/js/form/element/textarea',
-                'knockoutjs/knockout-es5'
-            ], function (Constr) {
-                model = new Constr({
-                    provider: 'provName',
-                    name: '',
-                    index: '',
-                    dataScope: dataScope
-                });
-
-                done();
-            });
+        beforeEach(function () {
+            params = {
+                dataScope: 'textarea'
+            };
+            model = new TextareaElement(params);
         });
 
         it('check if component defined', function () {

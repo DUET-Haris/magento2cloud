@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -8,7 +8,7 @@ namespace Magento\Security\Model\ResourceModel\PasswordResetRequestEvent;
 
 use Magento\Framework\Stdlib\DateTime\DateTime;
 
-class CollectionTest extends \PHPUnit\Framework\TestCase
+class CollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\Security\Model\ResourceModel\PasswordResetRequestEvent\Collection
@@ -27,7 +27,7 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->collectionModel = $this->objectManager
-            ->create(\Magento\Security\Model\ResourceModel\PasswordResetRequestEvent\Collection::class);
+            ->create('Magento\Security\Model\ResourceModel\PasswordResetRequestEvent\Collection');
     }
 
     /**

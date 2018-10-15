@@ -1,54 +1,24 @@
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 /*eslint max-nested-callbacks: 0*/
+
 define([
-    'squire'
-], function (Squire) {
+    'Magento_Ui/js/form/element/abstract'
+], function (Abstract) {
     'use strict';
 
     describe('Magento_Ui/js/form/element/abstract', function () {
-        var injector = new Squire(),
-            providerMock = {
-                get: jasmine.createSpy(),
-                set: jasmine.createSpy()
-            },
-            mocks = {
-                'Magento_Ui/js/lib/registry/registry': {
-                    /** Method stub. */
-                    get: function () {
-                        return providerMock;
-                    },
-                    create: jasmine.createSpy(),
-                    set: jasmine.createSpy(),
-                    async: jasmine.createSpy()
-                },
-                '/mage/utils/wrapper': jasmine.createSpy()
-            },
-            dataScope = 'abstract',
+        var params, model;
+
+        beforeEach(function () {
             params = {
-                provider: 'provName',
-                name: '',
-                index: 'testIndex',
-                dataScope: dataScope,
-                service: {
-                    template: 'ui/form/element/helper/service'
-                }
-            },
-            model;
-
-        beforeEach(function (done) {
-            injector.mock(mocks);
-            injector.require([
-                'Magento_Ui/js/form/element/abstract',
-                'knockoutjs/knockout-es5'
-            ], function (Constr) {
-                model = new Constr(params);
-
-                done();
-            });
+                dataScope: 'abstract'
+            };
+            model = new Abstract(params);
+            model.source = jasmine.createSpyObj('model.source', ['set']);
         });
 
         describe('initialize method', function () {
@@ -73,6 +43,17 @@ define([
                 expect(model.validation).toEqual({});
             });
         });
+        describe('initProperties method', function () {
+            it('check for chainable', function () {
+                expect(model.initProperties()).toEqual(model);
+            });
+            it('check for extend', function () {
+                model.initProperties();
+                expect(model.uid).toBeDefined();
+                expect(model.noticeId).toBeDefined();
+                expect(model.inputName).toBeDefined();
+            });
+        });
         describe('setInitialValue method', function () {
             it('check for chainable', function () {
                 expect(model.setInitialValue()).toEqual(model);
@@ -81,10 +62,8 @@ define([
                 var expectedValue = 1;
 
                 spyOn(model, 'getInitialValue').and.returnValue(expectedValue);
-                model.service = true;
                 expect(model.setInitialValue()).toEqual(model);
                 expect(model.getInitialValue).toHaveBeenCalled();
-                expect(model.source.set).toHaveBeenCalledWith('data.use_default.' + model.index, 0);
                 expect(model.value()).toEqual(expectedValue);
             });
         });
@@ -99,23 +78,15 @@ define([
                 expect(model.additionalClasses).toEqual(1);
             });
             it('check for empty additional class', function () {
-                var expectedResult = {
-                    _required: model.required,
-                    _warn: model.warn,
-                    _error: model.error,
-                    _disabled: model.disabled
-                };
-
                 model.additionalClasses = '';
 
                 expect(model._setClasses()).toEqual(model);
-                expect(model.additionalClasses).toEqual(expectedResult);
+                expect(model.additionalClasses).toEqual('');
             });
             it('check for one class in additional', function () {
                 var extendObject = {
                     simple: true,
-                    _required: model.required,
-                    _warn: model.warn,
+                    required: model.required,
                     _error: model.error,
                     _disabled: model.disabled
                 };
@@ -127,8 +98,7 @@ define([
             it('check for one class with spaces in additional', function () {
                 var extendObject = {
                     simple: true,
-                    _required: model.required,
-                    _warn: model.warn,
+                    required: model.required,
                     _error: model.error,
                     _disabled: model.disabled
                 };
@@ -141,8 +111,7 @@ define([
                 var extendObject = {
                     simple: true,
                     example: true,
-                    _required: model.required,
-                    _warn: model.warn,
+                    required: model.required,
                     _error: model.error,
                     _disabled: model.disabled
                 };
@@ -155,8 +124,7 @@ define([
                 var extendObject = {
                     simple: true,
                     example: true,
-                    _required: model.required,
-                    _warn: model.warn,
+                    required: model.required,
                     _error: model.error,
                     _disabled: model.disabled
                 };
@@ -171,8 +139,10 @@ define([
                 expect(model.getInitialValue()).toEqual('');
             });
             it('check with default value', function () {
-                model.default = 1;
-                expect(model.getInitialValue()).toEqual('');
+                var expected = 1;
+
+                model.default = expected;
+                expect(model.getInitialValue()).toEqual(expected);
             });
             it('check with value', function () {
                 var expected = 1;
@@ -334,12 +304,6 @@ define([
                 expect(model.bubble).toHaveBeenCalled();
                 expect(model.hasChanged).toHaveBeenCalled();
                 expect(model.validate).toHaveBeenCalled();
-            });
-        });
-        describe('serviceDisabled property', function () {
-            it('check property state', function () {
-                expect(typeof model.serviceDisabled).toEqual('function');
-                expect(model.serviceDisabled()).toBeFalsy();
             });
         });
     });

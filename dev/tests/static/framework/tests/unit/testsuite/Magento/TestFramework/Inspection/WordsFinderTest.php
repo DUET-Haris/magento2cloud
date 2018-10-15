@@ -1,13 +1,13 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\TestFramework\Inspection;
 
 use Magento\Framework\Component\ComponentRegistrar;
 
-class WordsFinderTest extends \PHPUnit\Framework\TestCase
+class WordsFinderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param string $configFile

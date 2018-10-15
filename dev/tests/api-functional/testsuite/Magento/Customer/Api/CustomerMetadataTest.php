@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -63,7 +63,7 @@ class CustomerMetadataTest extends WebapiAbstract
                 Customer::FIRSTNAME,
                 [
                     AttributeMetadata::FRONTEND_INPUT   => 'text',
-                    AttributeMetadata::INPUT_FILTER     => 'trim',
+                    AttributeMetadata::INPUT_FILTER     => '',
                     AttributeMetadata::STORE_LABEL      => 'First Name',
                     AttributeMetadata::MULTILINE_COUNT  => 0,
                     AttributeMetadata::VALIDATION_RULES => [
@@ -74,7 +74,7 @@ class CustomerMetadataTest extends WebapiAbstract
                     AttributeMetadata::REQUIRED         => true,
                     AttributeMetadata::DATA_MODEL       => '',
                     AttributeMetadata::OPTIONS          => [],
-                    AttributeMetadata::FRONTEND_CLASS   => 'required-entry',
+                    AttributeMetadata::FRONTEND_CLASS   => ' required-entry',
                     AttributeMetadata::USER_DEFINED     => false,
                     AttributeMetadata::SORT_ORDER       => 40,
                     AttributeMetadata::FRONTEND_LABEL   => 'First Name',
@@ -134,7 +134,7 @@ class CustomerMetadataTest extends WebapiAbstract
                     AttributeMetadata::OPTIONS          => [
                         ['label' => 'Main Website', 'value' => '1'],
                     ],
-                    AttributeMetadata::FRONTEND_CLASS   => 'required-entry',
+                    AttributeMetadata::FRONTEND_CLASS   => ' required-entry',
                     AttributeMetadata::USER_DEFINED     => false,
                     AttributeMetadata::SORT_ORDER       => 10,
                     AttributeMetadata::FRONTEND_LABEL   => 'Associate to Website',

@@ -1,169 +1,62 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Customer\Controller\Adminhtml\Index;
 
-use Magento\Backend\Model\Session;
-use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Customer\Api\Data\CustomerInterface;
-use PHPUnit\Framework\Constraint\Constraint;
-use Magento\Framework\Message\MessageInterface;
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\TestFramework\TestCase\AbstractBackendController;
 
 /**
  * @magentoAppArea adminhtml
  */
-class MassDeleteTest extends AbstractBackendController
+class MassDeleteTest extends \Magento\TestFramework\TestCase\AbstractBackendController
 {
-    /**
-     * @var CustomerRepositoryInterface
-     */
-    private $customerRepository;
-
     /**
      * Base controller URL
      *
      * @var string
      */
-    private $baseControllerUrl = 'http://localhost/index.php/backend/customer/index/index';
-
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->customerRepository = Bootstrap::getObjectManager()->get(CustomerRepositoryInterface::class);
-    }
+    protected $baseControllerUrl = 'http://localhost/index.php/backend/customer/index/index';
 
     protected function tearDown()
     {
         /**
          * Unset customer data
          */
-        Bootstrap::getObjectManager()->get(Session::class)->setCustomerData(null);
+        Bootstrap::getObjectManager()->get('Magento\Backend\Model\Session')->setCustomerData(null);
 
         /**
          * Unset messages
          */
-        Bootstrap::getObjectManager()->get(Session::class)->getMessages(true);
+        Bootstrap::getObjectManager()->get('Magento\Backend\Model\Session')->getMessages(true);
     }
 
     /**
-     * Validates failure attempts to delete customers from grid.
-     *
-     * @param array|null $ids
-     * @param Constraint $constraint
-     * @param string|null $messageType
-     * @magentoDataFixture Magento/Customer/_files/five_repository_customers.php
-     * @magentoDbIsolation disabled
-     * @dataProvider failedRequestDataProvider
+     * @magentoDataFixture Magento/Customer/_files/customer.php
      */
-    public function testFailedMassDeleteAction($ids, Constraint $constraint, $messageType)
+    public function testMassDeleteAction()
     {
-        $this->massDeleteAssertions($ids, $constraint, $messageType);
-    }
-
-    /**
-     * Validates success attempt to delete customer from grid.
-     *
-     * @param array $emails
-     * @param Constraint $constraint
-     * @param string $messageType
-     * @magentoDataFixture Magento/Customer/_files/five_repository_customers.php
-     * @magentoDbIsolation disabled
-     * @dataProvider successRequestDataProvider
-     */
-    public function testSuccessMassDeleteAction(array $emails, Constraint $constraint, string $messageType)
-    {
-        $ids = [];
-        foreach ($emails as $email) {
-            /** @var CustomerInterface $customer */
-            $customer = $this->customerRepository->get($email);
-            $ids[] = $customer->getId();
-        }
-
-        $this->massDeleteAssertions(
-            $ids,
-            $constraint,
-            $messageType
-        );
-    }
-
-    /**
-     * Performs required request and assertions.
-     *
-     * @param array|null $ids
-     * @param Constraint $constraint
-     * @param string|null $messageType
-     */
-    private function massDeleteAssertions($ids, Constraint $constraint, $messageType)
-    {
-        /** @var \Magento\Framework\Data\Form\FormKey $formKey */
-        $formKey = $this->_objectManager->get(\Magento\Framework\Data\Form\FormKey::class);
-
-        $requestData = [
-            'selected' => $ids,
-            'namespace' => 'customer_listing',
-            'form_key' => $formKey->getFormKey()
-        ];
-
-        $this->getRequest()->setParams($requestData);
-        $this->getRequest()->setMethod('POST');
+        $this->getRequest()->setPostValue('selected', [1])->setPostValue('namespace', 'customer_listing');
         $this->dispatch('backend/customer/index/massDelete');
         $this->assertSessionMessages(
-            $constraint,
-            $messageType
+            $this->equalTo(['A total of 1 record(s) were deleted.']),
+            \Magento\Framework\Message\MessageInterface::TYPE_SUCCESS
         );
         $this->assertRedirect($this->stringStartsWith($this->baseControllerUrl));
     }
 
     /**
-     * Provides sets of data for unsuccessful attempts.
-     *
-     * @return array
+     * Valid group Id but no customer Ids specified
+     * @magentoDbIsolation enabled
      */
-    public function failedRequestDataProvider(): array
+    public function testMassDeleteActionNoCustomerIds()
     {
-        return [
-            [
-                'ids' => [],
-                'constraint' => self::equalTo(['Please select item(s).']),
-                'messageType' => MessageInterface::TYPE_ERROR,
-            ],
-            [
-                'ids' => [111],
-                'constraint' => self::isEmpty(),
-                'messageType' => null,
-            ],
-            [
-                'ids' => null,
-                'constraint' => self::equalTo(['Please select item(s).']),
-                'messageType' => MessageInterface::TYPE_ERROR,
-            ]
-        ];
-    }
-
-    /**
-     * Provides sets of data for successful attempts.
-     *
-     * @return array
-     */
-    public function successRequestDataProvider(): array
-    {
-        return [
-            [
-                'customerEmails' => ['customer1@example.com'],
-                'constraint' => self::equalTo(['A total of 1 record(s) were deleted.']),
-                'messageType' => MessageInterface::TYPE_SUCCESS,
-            ],
-            [
-                'customerEmails' => ['customer2@example.com', 'customer3@example.com'],
-                'constraint' => self::equalTo(['A total of 2 record(s) were deleted.']),
-                'messageType' => MessageInterface::TYPE_SUCCESS,
-            ],
-        ];
+        $this->getRequest()->setPostValue('namespace', 'customer_listing');
+        $this->dispatch('backend/customer/index/massDelete');
+        $this->assertSessionMessages(
+            $this->equalTo(['Please select item(s).']),
+            \Magento\Framework\Message\MessageInterface::TYPE_ERROR
+        );
     }
 }

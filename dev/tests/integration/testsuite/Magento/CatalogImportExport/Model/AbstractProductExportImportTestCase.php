@@ -1,21 +1,26 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogImportExport\Model;
 
 use Magento\Framework\App\Bootstrap;
+use Magento\Framework\App\Config;
 use Magento\Framework\App\Filesystem\DirectoryList;
-use Magento\Store\Model\Store;
 
 /**
  * Abstract class for testing product export and import scenarios
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-abstract class AbstractProductExportImportTestCase extends \PHPUnit\Framework\TestCase
+abstract class AbstractProductExportImportTestCase extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \Magento\CatalogImportExport\Model\Export\Product
+     */
+    protected $model;
+
     /**
      * @var \Magento\Framework\ObjectManagerInterface
      */
@@ -51,11 +56,12 @@ abstract class AbstractProductExportImportTestCase extends \PHPUnit\Framework\Te
         'custom_design_from',
         'updated_in',
         'tax_class_id',
-        'description'
     ];
 
     protected function setUp()
     {
+        parent::setUp();
+
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->fileSystem = $this->objectManager->get(\Magento\Framework\Filesystem::class);
         $this->productResource = $this->objectManager->create(
@@ -71,7 +77,7 @@ abstract class AbstractProductExportImportTestCase extends \PHPUnit\Framework\Te
 
     /**
      * @magentoAppArea adminhtml
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      * @magentoAppIsolation enabled
      *
      * @param array $fixtures
@@ -111,22 +117,21 @@ abstract class AbstractProductExportImportTestCase extends \PHPUnit\Framework\Te
         $index = 0;
         $ids = [];
         $origProducts = [];
-        /** @var \Magento\CatalogInventory\Model\StockRegistryStorage $stockRegistryStorage */
-        $stockRegistryStorage = $this->objectManager->get(\Magento\CatalogInventory\Model\StockRegistryStorage::class);
-        /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $productRepository = $this->objectManager->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
         while (isset($skus[$index])) {
             $ids[$index] = $this->productResource->getIdBySku($skus[$index]);
-            $origProducts[$index] = $productRepository->get($skus[$index], false, Store::DEFAULT_STORE_ID);
+            $origProducts[$index] = $this->objectManager->create(\Magento\Catalog\Model\Product::class)
+                ->load($ids[$index]);
             $index++;
         }
 
         $csvfile = $this->exportProducts();
         $this->importProducts($csvfile, \Magento\ImportExport\Model\Import::BEHAVIOR_APPEND);
+
         while ($index > 0) {
             $index--;
-            $stockRegistryStorage->removeStockItem($ids[$index]);
-            $newProduct = $productRepository->get($skus[$index], false, Store::DEFAULT_STORE_ID, true);
+            $newProduct = $this->objectManager->create(\Magento\Catalog\Model\Product::class)
+                ->load($ids[$index]);
+
             // @todo uncomment or remove after MAGETWO-49806 resolved
             //$this->assertEquals(count($origProductData[$index]), count($newProductData));
 
@@ -149,7 +154,7 @@ abstract class AbstractProductExportImportTestCase extends \PHPUnit\Framework\Te
 
             $this->assertEquals(
                 $value,
-                isset($actual[$key]) ? $actual[$key] : null,
+                $actual[$key],
                 'Assert value at key - ' . $key . ' failed'
             );
         }
@@ -157,7 +162,7 @@ abstract class AbstractProductExportImportTestCase extends \PHPUnit\Framework\Te
 
     /**
      * @magentoAppArea adminhtml
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      * @magentoAppIsolation enabled
      *
      * @param array $fixtures
@@ -238,7 +243,7 @@ abstract class AbstractProductExportImportTestCase extends \PHPUnit\Framework\Te
 
     /**
      * @magentoAppArea adminhtml
-     * @magentoDbIsolation disabled
+     * @magentoDbIsolation enabled
      * @magentoAppIsolation enabled
      *
      * @param array $fixtures
@@ -256,33 +261,9 @@ abstract class AbstractProductExportImportTestCase extends \PHPUnit\Framework\Te
     }
 
     /**
-     * @magentoAppArea adminhtml
-     * @magentoDbIsolation disabled
-     * @magentoAppIsolation enabled
-     *
-     * @param array $fixtures
-     * @param string[] $skus
-     * @param string[] $skippedAttributes
-     * @dataProvider importReplaceDataProvider
-     */
-    public function testImportReplaceWithPagination($fixtures, $skus, $skippedAttributes = [])
-    {
-        $this->fixtures = $fixtures;
-        $this->executeFixtures($fixtures, $skus);
-        $this->modifyData($skus);
-        $skippedAttributes = array_merge(self::$skippedAttributes, $skippedAttributes);
-        $this->executeImportReplaceTest($skus, $skippedAttributes, true);
-    }
-
-    /**
-     * @param string[] $skus
-     * @param string[] $skippedAttributes
-     * @param bool $usePagination
-     *
      * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function executeImportReplaceTest($skus, $skippedAttributes, $usePagination = false)
+    protected function executeImportReplaceTest($skus, $skippedAttributes)
     {
         $replacedAttributes = [
             'row_id',
@@ -296,32 +277,22 @@ abstract class AbstractProductExportImportTestCase extends \PHPUnit\Framework\Te
         $index = 0;
         $ids = [];
         $origProducts = [];
-        /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $productRepository = $this->objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
         while (isset($skus[$index])) {
             $ids[$index] = $this->productResource->getIdBySku($skus[$index]);
-            $origProducts[$index] = $productRepository->get($skus[$index], false, Store::DEFAULT_STORE_ID);
+            $origProducts[$index] = $this->objectManager->create(\Magento\Catalog\Model\Product::class)
+                ->load($ids[$index]);
             $index++;
         }
 
-        $exportProduct = $this->objectManager->create(\Magento\CatalogImportExport\Model\Export\Product::class);
-        if ($usePagination) {
-            /** @var \ReflectionProperty $itemsPerPageProperty */
-            $itemsPerPageProperty = $this->objectManager->create(\ReflectionProperty::class, [
-                'class' => \Magento\CatalogImportExport\Model\Export\Product::class,
-                'name' => '_itemsPerPage'
-            ]);
-            $itemsPerPageProperty->setAccessible(true);
-            $itemsPerPageProperty->setValue($exportProduct, 1);
-        }
-
-        $csvfile = $this->exportProducts($exportProduct);
+        $csvfile = $this->exportProducts();
         $this->importProducts($csvfile, \Magento\ImportExport\Model\Import::BEHAVIOR_REPLACE);
 
         while ($index > 0) {
             $index--;
-            $productRepository->cleanCache();
-            $newProduct = $productRepository->get($skus[$index], false, Store::DEFAULT_STORE_ID, true);
+
+            $id = $this->productResource->getIdBySku($skus[$index]);
+            $newProduct = $this->objectManager->create(\Magento\Catalog\Model\Product::class)->load($id);
+
             // check original product is deleted
             $origProduct = $this->objectManager->create(\Magento\Catalog\Model\Product::class)->load($ids[$index]);
             $this->assertNull($origProduct->getId());
@@ -354,16 +325,13 @@ abstract class AbstractProductExportImportTestCase extends \PHPUnit\Framework\Te
     /**
      * Export products in the system
      *
-     * @param \Magento\CatalogImportExport\Model\Export\Product|null $exportProduct
      * @return string Return exported file name
      */
-    private function exportProducts(\Magento\CatalogImportExport\Model\Export\Product $exportProduct = null)
+    private function exportProducts()
     {
         $csvfile = uniqid('importexport_') . '.csv';
 
-        $exportProduct = $exportProduct ?: $this->objectManager->create(
-            \Magento\CatalogImportExport\Model\Export\Product::class
-        );
+        $exportProduct = $this->objectManager->create(\Magento\CatalogImportExport\Model\Export\Product::class);
         $exportProduct->setWriter(
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
                 \Magento\ImportExport\Model\Export\Adapter\Csv::class,

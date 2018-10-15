@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\CatalogImportExport\Model\Export;
@@ -9,10 +9,8 @@ namespace Magento\CatalogImportExport\Model\Export;
  * @magentoDataFixtureBeforeTransaction Magento/Catalog/_files/enable_reindex_schedule.php
  * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ProductTest extends \PHPUnit\Framework\TestCase
+class ProductTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \Magento\CatalogImportExport\Model\Export\Product
@@ -89,23 +87,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertContains('test_option_code_2', $exportData);
         $this->assertContains('max_characters=10', $exportData);
         $this->assertContains('text_attribute=!@#$%^&*()_+1234567890-=|\\:;""\'<,>.?/', $exportData);
-        $occurrencesCount = substr_count($exportData, 'Hello "" &"" Bring the water bottle when you can!');
-        $this->assertEquals(1, $occurrencesCount);
-    }
-
-    /**
-     * @magentoDataFixture Magento/CatalogImportExport/_files/product_export_data_special_chars.php
-     * @magentoDbIsolationEnabled
-     */
-    public function testExportSpecialChars()
-    {
-        $this->model->setWriter(
-            $this->objectManager->create(
-                \Magento\ImportExport\Model\Export\Adapter\Csv::class
-            )
-        );
-        $exportData = $this->model->export();
-        $this->assertContains('simple ""1""', $exportData);
     }
 
     /**
@@ -116,7 +97,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     {
         $this->model->setWriter(
             \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-                \Magento\ImportExport\Model\Export\Adapter\Csv::class
+                'Magento\ImportExport\Model\Export\Adapter\Csv'
             )
         );
         $this->assertNotEmpty($this->model->export());
@@ -124,7 +105,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Verify that all stock item attribute values are exported (aren't equal to empty string)
-     *
+     * 
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
      * @covers \Magento\CatalogImportExport\Model\Export\Product::export
@@ -132,12 +113,8 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      */
     public function testExportStockItemAttributesAreFilled()
     {
-        $this->markTestSkipped('Test needs to be skipped.');
-        $fileWrite = $this->createMock(\Magento\Framework\Filesystem\File\Write::class);
-        $directoryMock = $this->createPartialMock(
-            \Magento\Framework\Filesystem\Directory\Write::class,
-            ['getParentDirectory', 'isWritable', 'isFile', 'readFile', 'openFile']
-        );
+        $fileWrite = $this->getMock(\Magento\Framework\Filesystem\File\Write::class, [], [], '', false);
+        $directoryMock = $this->getMock(\Magento\Framework\Filesystem\Directory\Write::class, [], [], '', false);
         $directoryMock->expects($this->any())->method('getParentDirectory')->will($this->returnValue('some#path'));
         $directoryMock->expects($this->any())->method('isWritable')->will($this->returnValue(true));
         $directoryMock->expects($this->any())->method('isFile')->will($this->returnValue(true));
@@ -150,7 +127,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         );
         $directoryMock->expects($this->once())->method('openFile')->will($this->returnValue($fileWrite));
 
-        $filesystemMock = $this->createPartialMock(\Magento\Framework\Filesystem::class, ['getDirectoryWrite']);
+        $filesystemMock = $this->getMock(\Magento\Framework\Filesystem::class, [], [], '', false);
         $filesystemMock->expects($this->once())->method('getDirectoryWrite')->will($this->returnValue($directoryMock));
 
         $exportAdapter = new \Magento\ImportExport\Model\Export\Adapter\Csv($filesystemMock);
@@ -197,7 +174,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      */
     public function testExceptionInGetExportData()
     {
-        $this->markTestSkipped('Test needs to be skipped.');
         $exception = new \Exception('Error');
 
         $rowCustomizerMock =
@@ -207,14 +183,11 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)->getMock();
 
-        $directoryMock = $this->createPartialMock(
-            \Magento\Framework\Filesystem\Directory\Write::class,
-            ['getParentDirectory', 'isWritable']
-        );
+        $directoryMock = $this->getMock(\Magento\Framework\Filesystem\Directory\Write::class, [], [], '', false);
         $directoryMock->expects($this->any())->method('getParentDirectory')->will($this->returnValue('some#path'));
         $directoryMock->expects($this->any())->method('isWritable')->will($this->returnValue(true));
 
-        $filesystemMock = $this->createPartialMock(\Magento\Framework\Filesystem::class, ['getDirectoryWrite']);
+        $filesystemMock = $this->getMock(\Magento\Framework\Filesystem::class, [], [], '', false);
         $filesystemMock->expects($this->once())->method('getDirectoryWrite')->will($this->returnValue($directoryMock));
 
         $exportAdapter = new \Magento\ImportExport\Model\Export\Adapter\Csv($filesystemMock);
@@ -260,151 +233,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
         $this->assertContains('""Option 2""', $exportData);
         $this->assertContains('""Option 3""', $exportData);
-        $this->assertContains('""Option 4 """"!@#$%^&*""', $exportData);
-        $this->assertContains('text_attribute=""!@#$%^&*()_+1234567890-=|\:;""""\'<,>.?/', $exportData);
-    }
-
-    /**
-     * Verify that "category ids" filter correctly applies to export result
-     *
-     * @magentoDataFixture Magento/CatalogImportExport/_files/product_export_with_categories.php
-     */
-    public function testCategoryIdsFilter()
-    {
-        $this->model->setWriter(
-            $this->objectManager->create(
-                \Magento\ImportExport\Model\Export\Adapter\Csv::class
-            )
-        );
-
-        $this->model->setParameters([
-            \Magento\ImportExport\Model\Export::FILTER_ELEMENT_GROUP => [
-                'category_ids' => '2,13'
-            ]
-        ]);
-
-        $exportData = $this->model->export();
-
-        $this->assertContains('Simple Product', $exportData);
-        $this->assertContains('Simple Product Three', $exportData);
-        $this->assertNotContains('Simple Product Two', $exportData);
-        $this->assertNotContains('Simple Product Not Visible On Storefront', $exportData);
-    }
-
-    /**
-     * Test 'hide from product page' export for non-default store.
-     *
-     * @magentoDataFixture Magento/CatalogImportExport/_files/product_export_with_images.php
-     */
-    public function testExportWithMedia()
-    {
-        /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $productRepository = $this->objectManager->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-        $product = $productRepository->get('simple', 1);
-        $mediaGallery = $product->getData('media_gallery');
-        $image = array_shift($mediaGallery['images']);
-        $this->model->setWriter(
-            $this->objectManager->create(
-                \Magento\ImportExport\Model\Export\Adapter\Csv::class
-            )
-        );
-        $exportData = $this->model->export();
-        /** @var $varDirectory \Magento\Framework\Filesystem\Directory\WriteInterface */
-        $varDirectory = $this->objectManager->get(\Magento\Framework\Filesystem::class)
-            ->getDirectoryWrite(\Magento\Framework\App\Filesystem\DirectoryList::VAR_DIR);
-        $varDirectory->writeFile('test_product_with_image.csv', $exportData);
-        /** @var \Magento\Framework\File\Csv $csv */
-        $csv = $this->objectManager->get(\Magento\Framework\File\Csv::class);
-        $data = $csv->getData($varDirectory->getAbsolutePath('test_product_with_image.csv'));
-        foreach ($data[0] as $columnNumber => $columnName) {
-            if ($columnName === 'hide_from_product_page') {
-                self::assertSame($image['file'], $data[2][$columnNumber]);
-            }
-        }
-    }
-
-    /**
-     * @magentoDataFixture Magento/CatalogImportExport/_files/product_export_data.php
-     */
-    public function testExportWithCustomOptions()
-    {
-        $storeCode = 'default';
-        $expectedData = [];
-        /** @var \Magento\Catalog\Api\ProductRepositoryInterface $productRepository */
-        $productRepository = $this->objectManager->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
-        $store = $this->objectManager->create(\Magento\Store\Model\Store::class);
-        $store->load('default', 'code');
-        /** @var \Magento\Catalog\Api\Data\ProductInterface $product */
-        $product = $productRepository->get('simple', 1, $store->getStoreId());
-        $newCustomOptions = [];
-        foreach ($product->getOptions() as $customOption) {
-            $defaultOptionTitle = $customOption->getTitle();
-            $secondStoreOptionTitle = $customOption->getTitle() . '_' . $storeCode;
-            $expectedData['admin_store'][$defaultOptionTitle] = [];
-            $expectedData[$storeCode][$secondStoreOptionTitle] = [];
-            $customOption->setTitle($secondStoreOptionTitle);
-            if ($customOption->getValues()) {
-                $newOptionValues = [];
-                foreach ($customOption->getValues() as $customOptionValue) {
-                    $valueTitle = $customOptionValue->getTitle();
-                    $expectedData['admin_store'][$defaultOptionTitle][] = $valueTitle;
-                    $expectedData[$storeCode][$secondStoreOptionTitle][] = $valueTitle . '_' . $storeCode;
-                    $newOptionValues[] = $customOptionValue->setTitle($valueTitle . '_' . $storeCode);
-                }
-                $customOption->setValues($newOptionValues);
-            }
-            $newCustomOptions[] = $customOption;
-        }
-        $product->setOptions($newCustomOptions);
-        $productRepository->save($product);
-        $this->model->setWriter(
-            $this->objectManager->create(
-                \Magento\ImportExport\Model\Export\Adapter\Csv::class
-            )
-        );
-        $exportData = $this->model->export();
-        /** @var $varDirectory \Magento\Framework\Filesystem\Directory\WriteInterface */
-        $varDirectory = $this->objectManager->get(\Magento\Framework\Filesystem::class)
-            ->getDirectoryWrite(\Magento\Framework\App\Filesystem\DirectoryList::VAR_DIR);
-        $varDirectory->writeFile('test_product_with_custom_options_and_second_store.csv', $exportData);
-        /** @var \Magento\Framework\File\Csv $csv */
-        $csv = $this->objectManager->get(\Magento\Framework\File\Csv::class);
-        $data = $csv->getData($varDirectory->getAbsolutePath('test_product_with_custom_options_and_second_store.csv'));
-        $customOptionData = [];
-        foreach ($data[0] as $columnNumber => $columnName) {
-            if ($columnName === 'custom_options') {
-                $customOptionData['admin_store'] = $this->parseExportedCustomOption($data[1][$columnNumber]);
-                $customOptionData[$storeCode] = $this->parseExportedCustomOption($data[2][$columnNumber]);
-            }
-        }
-        self::assertSame($expectedData, $customOptionData);
-    }
-
-    /**
-     * @param $exportedCustomOption
-     * @return array
-     */
-    private function parseExportedCustomOption($exportedCustomOption)
-    {
-        $customOptions = explode('|', $exportedCustomOption);
-        $optionItems = [];
-        foreach ($customOptions as $customOption) {
-            $parsedOptions = array_values(
-                array_map(
-                    function ($input) {
-                        $data = explode('=', $input);
-                        return [$data[0] => $data[1]];
-                    },
-                    explode(',', $customOption)
-                )
-            );
-            $optionName = array_column($parsedOptions, 'name')[0];
-            if (!empty(array_column($parsedOptions, 'option_title'))) {
-                $optionItems[$optionName][] = array_column($parsedOptions, 'option_title')[0];
-            } else {
-                $optionItems[$optionName] = [];
-            }
-        }
-        return $optionItems;
+        $this->assertContains('""Option 4 """"!@#$%^&*"""', $exportData);
+        $this->assertContains('text_attribute=""!@#$%^&*()_+1234567890-=|\:;"""', $exportData);
     }
 }

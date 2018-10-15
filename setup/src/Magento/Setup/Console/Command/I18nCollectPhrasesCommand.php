@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Console\Command;
@@ -77,6 +77,5 @@ class I18nCollectPhrasesCommand extends Command
             $input->getOption(self::INPUT_KEY_MAGENTO)
         );
         $output->writeln('<info>Dictionary successfully processed.</info>');
-        return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
     }
 }

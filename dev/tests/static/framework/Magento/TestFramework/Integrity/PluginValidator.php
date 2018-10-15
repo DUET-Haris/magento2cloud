@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\TestFramework\Integrity;
@@ -44,8 +44,7 @@ class PluginValidator
      */
     private function validateClassNameMatchesCase($className)
     {
-        $declarationName = (new \ReflectionClass($className))->getName();
-
+        $declarationName = (new \ReflectionClass($className))->getName();;
         if (ltrim($className, '\\') != ltrim($declarationName)) {
             throw new ValidatorException(
                 new Phrase(

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Code\GeneratorTest;
@@ -104,9 +104,6 @@ class SourceClassWithNamespace extends ParentClassWithNamespace
     {
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.FinalImplementation) Suppressed as is a fixture but not a real code
-     */
     final public function publicChildFinal()
     {
     }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -40,7 +40,7 @@ class OrderStatusHistoryAddTest extends WebapiAbstract
     public function testOrderCommentAdd()
     {
         /** @var \Magento\Sales\Model\Order $order */
-        $order = $this->objectManager->create(\Magento\Sales\Model\Order::class);
+        $order = $this->objectManager->create('Magento\Sales\Model\Order');
         $order->loadByIncrementId(self::ORDER_INCREMENT_ID);
 
         $commentData = [

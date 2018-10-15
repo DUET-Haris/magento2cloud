@@ -2,21 +2,21 @@
 /**
  * SalesRule 10% discount coupon
  *
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
 /** @var \Magento\SalesRule\Model\Rule $salesRule */
-$salesRule = $objectManager->create(\Magento\SalesRule\Model\Rule::class);
+$salesRule = $objectManager->create('Magento\SalesRule\Model\Rule');
 
 $data = [
     'name' => 'Test Coupon for General',
     'is_active' => true,
     'website_ids' => [
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Store\Model\StoreManagerInterface::class
+            'Magento\Store\Model\StoreManagerInterface'
         )->getStore()->getWebsiteId()
     ],
     'customer_group_ids' => [1],
@@ -28,8 +28,6 @@ $data = [
 ];
 
 $salesRule->loadPost($data)->setUseAutoGeneration(false)->save();
-$objectManager->get(
-    \Magento\Framework\Registry::class
-)->unregister('Magento/Checkout/_file/discount_10percent_generalusers');
-$objectManager->get(\Magento\Framework\Registry::class)
+$objectManager->get('Magento\Framework\Registry')->unregister('Magento/Checkout/_file/discount_10percent_generalusers');
+$objectManager->get('Magento\Framework\Registry')
     ->register('Magento/Checkout/_file/discount_10percent_generalusers', $salesRule->getRuleId());

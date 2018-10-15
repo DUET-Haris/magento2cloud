@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -18,7 +18,7 @@ use Magento\Mtf\Client\Locator;
 class Links extends Block
 {
     /**
-     * Selector title for links
+     * Selector title for for links
      *
      * @var string
      */
@@ -111,7 +111,7 @@ class Links extends Block
         $linksData = [];
 
         $choiceLinks = $this->_rootElement->getElements($this->choiceLink, Locator::SELECTOR_XPATH);
-        foreach ($choiceLinks as $key => $choiceLink) {
+        foreach ($choiceLinks as $choiceLink) {
             $link = $choiceLink->find($this->linkForChoice);
             $sample = $choiceLink->find($this->sampleLinkForChoice);
             $price = $choiceLink->find($this->priceForChoice);
@@ -129,7 +129,7 @@ class Links extends Block
                     : null,
             ];
 
-            $linksData[$key + 1] = array_filter($linkData);
+            $linksData[] = array_filter($linkData);
         }
 
         return $linksData;

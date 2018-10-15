@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Setup\Model\Cron;
@@ -44,11 +44,13 @@ class JobSetCache extends AbstractJob
         $params = []
     ) {
         $this->command = $command;
+        $this->output = $output;
+        $this->status = $status;
         parent::__construct($output, $status, $objectManagerProvider, $name, $params);
     }
 
     /**
-     * Execute set cache command
+     * Execute set cache comand
      *
      * @return void
      */

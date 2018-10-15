@@ -1,16 +1,16 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
 namespace Magento\User\Test\Constraint;
 
-use Magento\Backend\Test\Page\Adminhtml\Dashboard;
+use Magento\User\Test\Page\Adminhtml\UserRoleIndex;
 use Magento\Mtf\Constraint\AbstractConstraint;
 
 /**
- * Assert that message about incorrect user password is displayed.
+ * Class AssertIncorrectUserPassword
  */
 class AssertIncorrectUserPassword extends AbstractConstraint
 {
@@ -19,12 +19,12 @@ class AssertIncorrectUserPassword extends AbstractConstraint
     /**
      * Asserts that invalid password message equals to expected message.
      *
-     * @param Dashboard $dashboard
+     * @param UserRoleIndex $rolePage
      * @return void
      */
-    public function processAssert(Dashboard $dashboard)
+    public function processAssert(UserRoleIndex $rolePage)
     {
-        $errorMessage = $dashboard->getMessagesBlock()->getErrorMessage();
+        $errorMessage = $rolePage->getMessagesBlock()->getErrorMessage();
         \PHPUnit_Framework_Assert::assertEquals(
             self::ERROR_MESSAGE,
             $errorMessage,

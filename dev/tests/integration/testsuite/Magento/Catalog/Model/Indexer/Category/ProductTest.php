@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Catalog\Model\Indexer\Category;
@@ -9,11 +9,10 @@ use Magento\Catalog\Model\Category;
 
 /**
  * @magentoDataFixture Magento/Catalog/_files/indexer_catalog_category.php
- * @magentoDataFixture Magento/Catalog/_files/indexer_catalog_products.php
- * @magentoDbIsolation disabled
+ * @magentoDbIsolation enabled
  * @magentoAppIsolation enabled
  */
-class ProductTest extends \PHPUnit\Framework\TestCase
+class ProductTest extends \PHPUnit_Framework_TestCase
 {
     const DEFAULT_ROOT_CATEGORY = 2;
 
@@ -27,31 +26,23 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      */
     protected $productResource;
 
-    /**
-     * @var \Magento\Catalog\Api\CategoryRepositoryInterface
-     */
-    private $categoryRepository;
-
     protected function setUp()
     {
         /** @var \Magento\Framework\Indexer\IndexerInterface indexer */
         $this->indexer = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Indexer\Model\Indexer::class
+            'Magento\Indexer\Model\Indexer'
         );
         $this->indexer->load('catalog_category_product');
 
         /** @var \Magento\Catalog\Model\ResourceModel\Product $productResource */
         $this->productResource = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->get(
-            \Magento\Catalog\Model\ResourceModel\Product::class
-        );
-
-        $this->categoryRepository = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Api\CategoryRepositoryInterface::class
+            'Magento\Catalog\Model\ResourceModel\Product'
         );
     }
 
     /**
-     * @magentoAppArea adminhtml
+     * @magentoDataFixture Magento/Catalog/_files/indexer_catalog_category.php
+     * @magentoDbIsolation enabled
      */
     public function testReindexAll()
     {
@@ -90,6 +81,9 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoAppArea adminhtml
+     * @magentoDataFixture Magento/Catalog/_files/indexer_catalog_category.php
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
      */
     public function testCategoryMove()
     {
@@ -118,7 +112,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->indexer->reindexAll();
 
         /**
-         * Move $categoryFourth from $categoryThird to $categorySecond
+         * Move category from $categoryThird to $categorySecond
          */
         $categoryFourth->move($categorySecond->getId(), null);
 
@@ -174,17 +168,17 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $categorySecond->setIsAnchor(0);
         $categorySecond->save();
 
-        /** @var Category $categoryFourth */
-        $categoryFourth = end($categories);
+        /** @var Category $categoryFifth */
+        $categoryFifth = end($categories);
 
         /** @var Category $categorySixth */
         $categorySixth = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
         $categorySixth->setName(
             'Category 6'
         )->setPath(
-            $categoryFourth->getPath()
+            $categoryFifth->getPath()
         )->setAvailableSortBy(
             'name'
         )->setDefaultSortBy(
@@ -198,7 +192,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $productThird->setCategoryIds([$categorySixth->getId()]);
         $productThird->save();
 
-        $categories = [self::DEFAULT_ROOT_CATEGORY, $categorySixth->getId(), $categoryFourth->getId()];
+        $categories = [self::DEFAULT_ROOT_CATEGORY, $categorySixth->getId(), $categoryFifth->getId()];
         foreach ($categories as $categoryId) {
             $this->assertTrue((bool)$this->productResource->canBeShowInCategory($productThird, $categoryId));
         }
@@ -210,27 +204,6 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoAppArea adminhtml
-     * @depends testReindexAll
-     *
-     * @return void
-     */
-    public function testCatalogCategoryProductIndexInvalidateAfterDelete()
-    {
-        $indexerShouldBeValid = (bool)$this->indexer->isInvalid();
-
-        $categories = $this->getCategories(1);
-        $this->categoryRepository->delete(array_pop($categories));
-
-        $state = $this->indexer->getState();
-        $state->loadByIndexer($this->indexer->getId());
-        $status = $state->getStatus();
-
-        $this->assertFalse($indexerShouldBeValid);
-        $this->assertEquals(\Magento\Framework\Indexer\StateInterface::STATUS_INVALID, $status);
-    }
-
-    /**
      * @param int $count
      * @return Category[]
      */
@@ -238,10 +211,10 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     {
         /** @var Category $category */
         $category = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Category::class
+            'Magento\Catalog\Model\Category'
         );
 
-        $result = $category->getCollection()->addAttributeToSelect('name')->getItems();
+        $result = $category->getCollection()->getItems();
         $result = array_slice($result, 2);
 
         return array_slice($result, 0, $count);
@@ -255,7 +228,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
     {
         /** @var \Magento\Catalog\Model\Product $product */
         $product = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Catalog\Model\Product::class
+            'Magento\Catalog\Model\Product'
         );
 
         $result[] = $product->load(1);

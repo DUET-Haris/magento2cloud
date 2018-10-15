@@ -1,9 +1,8 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
-require __DIR__ . '/multiselect_attribute_rollback.php';
 /**
  * Remove all products as strategy of isolation process
  */

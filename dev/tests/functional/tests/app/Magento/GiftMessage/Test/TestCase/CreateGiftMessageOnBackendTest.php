@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
+ * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -20,14 +20,14 @@ use Magento\Mtf\TestCase\Scenario;
  * 4. Fill data form dataset
  * 5. Perform all asserts
  *
- * @group Gift_Messages
+ * @group Gift_Messages_(CS)
  * @ZephyrId MAGETWO-29642
  */
 class CreateGiftMessageOnBackendTest extends Scenario
 {
     /* tags */
     const MVP = 'no';
-    const SEVERITY = 'S2';
+    const DOMAIN = 'CS';
     const TO_MAINTAIN = 'yes';
     /* end tags */
 
