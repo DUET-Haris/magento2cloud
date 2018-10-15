@@ -19,6 +19,9 @@
  */
 
 
+echo 'testing';exit;
+
+
 try {
     require __DIR__ . '/app/bootstrap.php';
 } catch (\Exception $e) {
