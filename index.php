@@ -19,7 +19,7 @@
  */
 
 
-echo "Integration";exit;
+echo "Staging";exit;
 
 
 try {
