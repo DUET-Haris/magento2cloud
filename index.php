@@ -19,7 +19,7 @@
  */
 
 
-echo 'testing';exit;
+echo "Staging";exit;
 
 
 try {
