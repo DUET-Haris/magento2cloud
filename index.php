@@ -19,7 +19,7 @@
  */
 
 
-echo "Master";exit;
+echo "Master B";exit;
 
 
 try {
