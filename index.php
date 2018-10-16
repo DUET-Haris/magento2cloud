@@ -20,7 +20,7 @@
 
 
 
-echo "Staging";exit;
+echo "Stage";exit;
 
 
 try {
