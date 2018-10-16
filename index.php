@@ -19,9 +19,6 @@
  */
 
 
-echo "Integration";exit;
-
-
 echo "Stage";exit;
 
 
