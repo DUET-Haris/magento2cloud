@@ -19,7 +19,7 @@
  */
 
 
-echo "Stage";exit;
+echo "Staging B";exit;
 
 
 try {
