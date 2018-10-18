@@ -19,7 +19,7 @@
  */
 
 
-echo "Integration B";exit;
+echo "Integration Branch";exit;
 
 
 try {
